@@ -55,7 +55,7 @@ h3 { font-size: 21px; line-height: 1.25; margin-bottom: 8px; font-weight: 900; }
 .eyebrow, .lab-name { margin-bottom: 10px; color: var(--red); font-family: var(--font-doodle); font-size: 14px; font-weight: 900; letter-spacing: 0; }
 .lead { max-width: 760px; color: var(--muted); font-size: 19px; }
 
-.home-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); min-height: calc(100svh - 79px); padding: 86px 52px 68px; align-items: center; overflow: hidden; background: #fff; }
+.home-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); min-height: calc(100svh - 79px); padding: 72px 52px 58px; align-items: center; overflow: hidden; background: #fff; }
 .home-hero::before { position: absolute; right: 7%; top: 18%; width: 90px; height: 90px; border: 4px solid var(--red); border-radius: 54% 46% 60% 40%; content: ""; opacity: .9; transform: rotate(12deg); }
 .home-hero::after { position: absolute; left: 8%; bottom: 12%; width: 180px; height: 16px; border-radius: 999px; background: var(--yellow); content: ""; transform: rotate(-5deg); }
 .hero-copy { position: relative; z-index: 1; max-width: 1180px; opacity: 0; transform: translateY(18px); }
@@ -77,13 +77,13 @@ body.is-ready .hero-copy { animation: riseIn .72s ease forwards; }
 .text-button { color: var(--ink); border-bottom: 3px solid var(--red); border-radius: 0; }
 .text-button:hover { color: var(--red); transform: translateY(-1px); }
 
-.demo-stage { position: relative; z-index: 1; width: min(820px, 100%); margin: 74px 0 0 auto; padding: 22px; border: 3px dashed var(--ink); border-radius: 8px; background: #fff; box-shadow: 8px 8px 0 var(--red-soft); transform: rotate(-1deg); }
+.demo-stage { position: relative; z-index: 1; width: min(820px, 100%); margin: 46px 0 0 auto; padding: 22px; border: 3px dashed var(--ink); border-radius: 8px; background: #fff; box-shadow: 8px 8px 0 var(--red-soft); transform: rotate(-1deg); }
 .demo-stage::before { position: absolute; left: 22px; top: -16px; padding: 1px 10px; border: 2px solid var(--ink); border-radius: 999px; background: var(--yellow); content: "小演示"; font-family: var(--font-doodle); font-weight: 900; transform: rotate(4deg); }
 .demo-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
 .demo-head span { color: var(--red); font-size: 13px; font-weight: 900; }
 .demo-head strong { font-family: var(--font-doodle); font-size: 24px; line-height: 1.2; }
 .demo-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.demo-flow article { position: relative; overflow: hidden; padding: 16px; min-height: 160px; border: 2px solid var(--line); border-radius: 8px; background: #fff; transition: transform .28s ease, border-color .28s ease, background .28s ease; }
+.demo-flow article { position: relative; overflow: hidden; padding: 16px; min-height: 138px; border: 2px solid var(--line); border-radius: 8px; background: #fff; transition: transform .28s ease, border-color .28s ease, background .28s ease; }
 .demo-flow article::before { position: absolute; inset: auto 14px 12px 14px; height: 4px; border-radius: 999px; content: ""; background: var(--line); transform: scaleX(.45); transform-origin: left; transition: transform .28s ease, background .28s ease; }
 .demo-flow article.is-hot { border-color: var(--red); background: var(--red-soft); transform: translateY(-4px) rotate(1deg); }
 .demo-flow article.is-hot::before { background: var(--red); transform: scaleX(1); }
