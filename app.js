@@ -106,9 +106,189 @@
     if (fileInput && filePicked) {
       fileInput.addEventListener("change", () => {
         const file = fileInput.files && fileInput.files[0];
-        filePicked.textContent = file ? `已选择：${file.name}` : "还没选文件。支持 doc、docx、pdf、txt、md、rtf、wps。";
+        filePicked.textContent = file ? `已选择：${file.name}` : "还没选文件。支持 docx、pdf、txt、md、rtf。";
         filePicked.classList.toggle("file-picked", Boolean(file));
       });
+    }
+
+    const aiReviewForm = document.querySelector("[data-ai-review-form]");
+    if (aiReviewForm) {
+      const statusPanel = document.querySelector("[data-review-status]");
+      const statusTitle = document.querySelector("[data-review-title]");
+      const statusEta = document.querySelector("[data-review-eta]");
+      const statusMessage = document.querySelector("[data-review-message]");
+      const progressBar = document.querySelector("[data-review-progress]");
+      const downloads = document.querySelector("[data-review-downloads]");
+      const submitButton = aiReviewForm.querySelector('button[type="submit"]');
+      let countdownTimer = null;
+      let pollTimer = null;
+      let openAiReady = true;
+
+      function formatSeconds(seconds) {
+        const safe = Math.max(0, Math.ceil(seconds));
+        if (safe < 60) return `${safe} 秒`;
+        return `${Math.floor(safe / 60)} 分 ${String(safe % 60).padStart(2, "0")} 秒`;
+      }
+
+      function setReviewStatus({ title, eta, message, progress }) {
+        if (statusPanel) statusPanel.hidden = false;
+        if (statusTitle && title) statusTitle.textContent = title;
+        if (statusEta && typeof eta === "string") statusEta.textContent = eta;
+        if (statusMessage && message) statusMessage.textContent = message;
+        if (progressBar && typeof progress === "number") progressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+      }
+
+      function blobFromBase64(base64, mimeType) {
+        const binary = atob(base64);
+        const chunks = [];
+        for (let index = 0; index < binary.length; index += 8192) {
+          const slice = binary.slice(index, index + 8192);
+          const bytes = new Uint8Array(slice.length);
+          for (let offset = 0; offset < slice.length; offset += 1) bytes[offset] = slice.charCodeAt(offset);
+          chunks.push(bytes);
+        }
+        return new Blob(chunks, { type: mimeType });
+      }
+
+      function renderDownloads(files) {
+        if (!downloads) return;
+        downloads.innerHTML = "";
+        files.forEach((file) => {
+          const link = document.createElement("a");
+          link.className = "download-pill";
+          link.href = URL.createObjectURL(blobFromBase64(file.data, file.mimeType));
+          link.download = file.filename;
+          link.textContent = `下载${file.filename}`;
+          downloads.appendChild(link);
+        });
+      }
+
+      function clearReviewTimers() {
+        if (countdownTimer) window.clearInterval(countdownTimer);
+        if (pollTimer) window.clearInterval(pollTimer);
+        countdownTimer = null;
+        pollTimer = null;
+      }
+
+      async function checkOpenAiConfig() {
+        try {
+          const response = await fetch("/.netlify/functions/openai-config-status");
+          const payload = await response.json();
+          openAiReady = Boolean(payload.ok);
+          if (!openAiReady) {
+            setReviewStatus({
+              title: "AI 通道未接通",
+              eta: "先别传合同",
+              message: payload.message || "后台还没有配置 OpenAI 密钥。",
+              progress: 100
+            });
+            if (submitButton) submitButton.disabled = true;
+          }
+        } catch {
+          openAiReady = false;
+          setReviewStatus({
+            title: "AI 通道自检失败",
+            eta: "先别传合同",
+            message: "暂时没有连上审查通道，请稍后再试。",
+            progress: 100
+          });
+          if (submitButton) submitButton.disabled = true;
+        }
+      }
+
+      async function pollReview(jobId) {
+        const response = await fetch(`/.netlify/functions/review-status?jobId=${encodeURIComponent(jobId)}`);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "没有查到审查进度。");
+        const isError = payload.status === "error";
+        setReviewStatus({
+          title: payload.status === "completed" ? "审查完成" : isError ? "审查失败" : "审查中",
+          eta: isError ? "先别急，问题已经抓到" : undefined,
+          message: payload.error || payload.stage || "正在处理。",
+          progress: payload.progress || 16
+        });
+        if (payload.status === "completed") {
+          clearReviewTimers();
+          if (submitButton) submitButton.disabled = false;
+          setReviewStatus({
+            title: "审查完成",
+            eta: "可以下载文件了",
+            message: payload.summary || "修改版和修改说明已经生成。",
+            progress: 100
+          });
+          renderDownloads(payload.files || []);
+          return true;
+        }
+        if (payload.status === "error") {
+          clearReviewTimers();
+          if (submitButton) submitButton.disabled = false;
+          return true;
+        }
+        return false;
+      }
+
+      aiReviewForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!openAiReady) {
+          setReviewStatus({
+            title: "AI 通道未接通",
+            eta: "先别传合同",
+            message: "后台 OpenAI 密钥配好后，这里会自动恢复上传。",
+            progress: 100
+          });
+          return;
+        }
+        clearReviewTimers();
+        if (downloads) downloads.innerHTML = "";
+        if (submitButton) submitButton.disabled = true;
+        setReviewStatus({
+          title: "正在上传",
+          eta: "预计等待时间计算中",
+          message: "文件正在进入审查室。",
+          progress: 8
+        });
+        statusPanel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+        try {
+          const response = await fetch("/.netlify/functions/review-contract", {
+            method: "POST",
+            body: new FormData(aiReviewForm)
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || "上传失败。");
+
+          let remaining = payload.estimatedSeconds || 60;
+          setReviewStatus({
+            title: "审查中",
+            eta: `预计还要 ${formatSeconds(remaining)}`,
+            message: "AI 正在读合同，先抓付款、担责、违约金和空白补写。",
+            progress: 14
+          });
+          countdownTimer = window.setInterval(() => {
+            remaining -= 1;
+            if (statusEta) statusEta.textContent = remaining > 0 ? `预计还要 ${formatSeconds(remaining)}` : "马上出结果";
+          }, 1000);
+
+          pollTimer = window.setInterval(() => {
+            pollReview(payload.jobId).catch((error) => {
+              clearReviewTimers();
+              if (submitButton) submitButton.disabled = false;
+              setReviewStatus({ title: "审查失败", eta: "请稍后再试", message: error.message, progress: 100 });
+            });
+          }, 3500);
+          window.setTimeout(() => pollReview(payload.jobId).catch(() => undefined), 1000);
+        } catch (error) {
+          clearReviewTimers();
+          if (submitButton) submitButton.disabled = false;
+          setReviewStatus({
+            title: "提交失败",
+            eta: "没有开始审查",
+            message: error.message || "请稍后再试。",
+            progress: 100
+          });
+        }
+      });
+      checkOpenAiConfig();
     }
 
     document.querySelectorAll("[data-copy-text]").forEach((button) => {

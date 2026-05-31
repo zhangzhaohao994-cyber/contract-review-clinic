@@ -33,17 +33,26 @@
         <h1>把合同发来，我先帮你扫一遍</h1>
         <p>说明你是哪一方、交易金额、最怕什么。越具体，审查越像手术刀；只说“帮我看看”也行，我会先从最大风险下手。</p>
       </div>
-      <form class="contact-form" name="contract-review" method="POST" action="/submit/success/" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data">
+      <form class="contact-form" name="contract-review" method="POST" action="/submit/success/" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data" data-ai-review-form>
         <input type="hidden" name="form-name" value="contract-review" />
         <p class="hidden-field"><label>不要填写这里 <input name="bot-field" /></label></p>
         <label>称呼<input name="name" autocomplete="name" placeholder="例如：张先生" required /></label>
         <label>联系方式<input name="contact" placeholder="微信 / 手机 / 邮箱" required /></label>
         <label>你是哪一方<select name="role"><option>我是甲方 / 付款方</option><option>我是乙方 / 收款方</option><option>我是劳动者</option><option>我是承租方</option><option>我是投资方</option></select></label>
-        <label>合同文件<input name="contract-file" type="file" accept=".doc,.docx,.pdf,.txt,.md,.rtf,.wps" data-file-input required /></label>
-        <p class="upload-note"><span data-file-picked>还没选文件。支持 doc、docx、pdf、txt、md、rtf、wps。</span></p>
+        <label>合同文件<input name="contract-file" type="file" accept=".docx,.pdf,.txt,.md,.rtf" data-file-input required /></label>
+        <p class="upload-note"><span data-file-picked>还没选文件。支持 docx、pdf、txt、md、rtf。</span></p>
         <label>你最担心什么<textarea name="concern" placeholder="例如：怕签完就要付居间费，怕对方补写空白，怕我个人承担连带责任。" required></textarea></label>
         <button class="primary-button" type="submit">提交免费初审</button>
-        <p class="form-status">提交后会进入确认页；我会优先看付款、担责、空白补写、违约金这些最容易坑人的位置。</p>
+        <p class="form-status">提交后会在本页生成审查结果；我会优先看付款、担责、空白补写、违约金这些最容易坑人的位置。</p>
+        <div class="review-status-panel" data-review-status hidden>
+          <div class="review-status-topline">
+            <strong data-review-title>准备审查</strong>
+            <span data-review-eta>预计等待时间计算中</span>
+          </div>
+          <div class="review-progress" aria-hidden="true"><span data-review-progress></span></div>
+          <p data-review-message>文件上传后，审查进度会出现在这里。</p>
+          <div class="download-list" data-review-downloads></div>
+        </div>
       </form>
     </section>
 

@@ -214,6 +214,17 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
 .contact-form { display: grid; gap: 14px; padding: 26px; border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--red-soft); transform: rotate(-.25deg); }
 .contact-form textarea { min-height: 130px; }
 .hidden-field { display: none; }
+.primary-button:disabled { opacity: .58; cursor: wait; transform: none; box-shadow: 2px 2px 0 var(--ink); }
+.review-status-panel { display: grid; gap: 12px; padding: 18px; border: 2px dashed var(--ink); border-radius: 8px; background: #fff; box-shadow: 4px 4px 0 var(--red-soft); }
+.review-status-panel[hidden] { display: none; }
+.review-status-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-family: var(--font-doodle); }
+.review-status-topline strong { font-size: 22px; font-weight: 400; }
+.review-status-topline span { color: var(--red); font-size: 14px; white-space: nowrap; }
+.review-progress { height: 8px; overflow: hidden; border: 2px solid var(--ink); border-radius: 999px; background: #fff; }
+.review-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--red); transition: width .35s ease; }
+.download-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.download-pill { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 0 15px; border: 2px solid var(--ink); border-radius: 999px; background: var(--red); color: #fff; font-family: var(--font-doodle); box-shadow: 3px 3px 0 var(--ink); }
+.download-pill:hover { transform: translate(-1px, -1px) rotate(-1deg); }
 .checklist-panel { max-width: 980px; margin: 18px 52px 52px; padding: 22px; }
 .checklist-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .checklist-panel ol { padding: 0; margin: 0; list-style: none; }
@@ -322,4 +333,6 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
   .note-band, .checklist-panel { margin-left: 18px; margin-right: 18px; }
   .site-footer { flex-direction: column; padding: 24px 18px; }
   .footer-links { flex-wrap: wrap; }
+  .review-status-topline { align-items: flex-start; flex-direction: column; }
+  .review-status-topline span { white-space: normal; }
 }
