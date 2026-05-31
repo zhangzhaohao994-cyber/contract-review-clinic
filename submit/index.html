@@ -4,16 +4,16 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="提交合同进行免费初审。" />
-        <title>提交合同 | 契约体检室</title>
+        <title>提交合同 | 契约实验室</title>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <body>
 
     <header class="site-header" data-header>
-      <a class="brand" href="/" aria-label="契约体检室首页">
-        <span class="brand-mark" aria-hidden="true">契</span>
-        <span><strong>契约体检室</strong><small>Contract Clinic</small></span>
+      <a class="brand" href="/" aria-label="不被坑首页">
+        <span class="brand-mark" aria-hidden="true">不</span>
+        <span><strong>不被坑！</strong><small>bubeiken</small></span>
       </a>
       <button class="menu-button" type="button" data-menu-button aria-label="打开导航">☰</button>
       <nav class="site-nav" data-nav aria-label="主导航"><a class="nav-link" href="/services/">服务</a>
@@ -33,15 +33,17 @@
         <h1>把合同发来，我先帮你扫一遍</h1>
         <p>说明你是哪一方、交易金额、最怕什么。越具体，审查越像手术刀；只说“帮我看看”也行，我会先从最大风险下手。</p>
       </div>
-      <form class="contact-form" name="contract-review" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
+      <form class="contact-form" name="contract-review" method="POST" action="/submit/success/" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
         <input type="hidden" name="form-name" value="contract-review" />
         <p class="hidden-field"><label>不要填写这里 <input name="bot-field" /></label></p>
         <label>称呼<input name="name" autocomplete="name" placeholder="例如：张先生" required /></label>
         <label>联系方式<input name="contact" placeholder="微信 / 手机 / 邮箱" required /></label>
         <label>你是哪一方<select name="role"><option>我是甲方 / 付款方</option><option>我是乙方 / 收款方</option><option>我是劳动者</option><option>我是承租方</option><option>我是投资方</option></select></label>
-        <label>合同文件<input name="contract-file" type="file" accept=".doc,.docx,.pdf,.txt,.md" /></label>
+        <label>合同文件<input name="contract-file" type="file" accept=".doc,.docx,.pdf,.txt,.md,.rtf,.wps" data-file-input required /></label>
+        <p class="upload-note"><span data-file-picked>还没选文件。支持 doc、docx、pdf、txt、md、rtf、wps。</span></p>
         <label>你最担心什么<textarea name="concern" placeholder="例如：怕签完就要付居间费，怕对方补写空白，怕我个人承担连带责任。" required></textarea></label>
         <button class="primary-button" type="submit">提交免费初审</button>
+        <p class="form-status">提交后会进入确认页；我会优先看付款、担责、空白补写、违约金这些最容易坑人的位置。</p>
       </form>
     </section>
 
@@ -49,8 +51,8 @@
 
     <footer class="site-footer">
       <div>
-        <strong>契约体检室</strong>
-        <p>日本博士后帮你免费审查合同。签字之前，先让条款过一遍安检。</p>
+        <strong>怕被坑？写合同就来不被坑！</strong>
+        <p><span>bubeiken</span> · 契约实验室 · 日本博士后帮你免费审查合同</p>
       </div>
       <div class="footer-links">
         <a href="/tools/contract-checker/">合同体检</a>

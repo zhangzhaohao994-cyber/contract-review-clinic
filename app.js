@@ -33,6 +33,13 @@
 
     document.body.classList.add("is-ready");
 
+    const intro = document.querySelector("[data-intro]");
+    if (intro) {
+      window.setTimeout(() => {
+        intro.setAttribute("hidden", "");
+      }, 3600);
+    }
+
     const menuButton = document.querySelector("[data-menu-button]");
     const nav = document.querySelector("[data-nav]");
     if (menuButton && nav) menuButton.addEventListener("click", () => nav.classList.toggle("is-open"));
@@ -74,6 +81,16 @@
         if (count) count.textContent = `${done} / ${total}`;
       });
     });
+
+    const fileInput = document.querySelector("[data-file-input]");
+    const filePicked = document.querySelector("[data-file-picked]");
+    if (fileInput && filePicked) {
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files && fileInput.files[0];
+        filePicked.textContent = file ? `已选择：${file.name}` : "还没选文件。支持 doc、docx、pdf、txt、md、rtf、wps。";
+        filePicked.classList.toggle("file-picked", Boolean(file));
+      });
+    }
 
     const demoItems = [
       {
