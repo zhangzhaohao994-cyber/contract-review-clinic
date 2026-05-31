@@ -1,4 +1,4 @@
-const { createReviewStore, jsonResponse } = require("./review-utils");
+const { createReviewStore, jsonResponse, normalizeFilename } = require("./review-utils");
 
 function adminError(event) {
   const expected = String(process.env.ADMIN_TOKEN || "").trim();
@@ -22,7 +22,7 @@ function publicSubmission(submission, status) {
     note: status?.note || submission.note || "",
     keyRisks: submission.keyRisks || [],
     changeCount: submission.changeCount || 0,
-    filename: submission.filename,
+    filename: normalizeFilename(submission.filename),
     mimeType: submission.mimeType,
     fileSize: submission.fileSize,
     fields: submission.fields || {},
