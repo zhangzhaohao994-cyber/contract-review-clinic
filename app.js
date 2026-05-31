@@ -199,6 +199,15 @@
       async function pollReview(jobId) {
         const response = await fetch(`/.netlify/functions/review-status?jobId=${encodeURIComponent(jobId)}`);
         const payload = await response.json();
+        if (response.status === 404) {
+          setReviewStatus({
+            title: "审查中",
+            eta: undefined,
+            message: "正在同步审查进度，别急，文件还在路上。",
+            progress: 18
+          });
+          return false;
+        }
         if (!response.ok) throw new Error(payload.error || "没有查到审查进度。");
         const isError = payload.status === "error";
         setReviewStatus({

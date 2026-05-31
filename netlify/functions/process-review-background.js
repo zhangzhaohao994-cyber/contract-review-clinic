@@ -46,6 +46,15 @@ async function updateStatus(store, jobId, patch) {
   });
 }
 
+async function waitForInput(store, jobId) {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const input = await store.get(`${jobId}:input`, { type: "json" });
+    if (input) return input;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  return null;
+}
+
 async function reviewWithOpenAI({ contractText, fields, filename, truncated }) {
   const config = getOpenAiConfigStatus();
   if (!config.ok) throw new Error(config.ownerMessage);
@@ -116,7 +125,7 @@ exports.handler = async (event) => {
     jobId = JSON.parse(event.body || "{}").jobId;
     if (!jobId) return jsonResponse(400, { error: "缺少任务编号。" });
 
-    const input = await store.get(`${jobId}:input`, { type: "json" });
+    const input = await waitForInput(store, jobId);
     if (!input) throw new Error("没有找到上传文件。");
 
     await updateStatus(store, jobId, { status: "processing", stage: "正在读取合同文件。", progress: 22 });

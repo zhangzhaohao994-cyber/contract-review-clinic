@@ -30,7 +30,7 @@ function createReviewStore(event) {
   let blobStore = null;
   try {
     if (event) connectLambda(event);
-    blobStore = getStore({ name: "contract-reviews", consistency: "strong" });
+    blobStore = getStore("contract-reviews");
   } catch {
     blobStore = null;
   }
