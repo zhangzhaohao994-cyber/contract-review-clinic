@@ -30,18 +30,14 @@ button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 ::selection { background: var(--yellow); color: var(--ink); }
 
-.intro-doodle { position: fixed; inset: 0; z-index: 1000; display: grid; align-content: center; justify-items: center; gap: 24px; background: #fff; animation: introAway .75s ease 5.95s forwards; }
-.intro-word { position: relative; font-family: var(--font-doodle); font-size: 92px; font-weight: 400; line-height: 1; color: var(--ink); transform: rotate(-2deg); }
-.intro-word span { display: inline-block; opacity: 0; clip-path: inset(0 100% 0 0); animation: writeChar 1.05s steps(12, end) forwards; }
-.intro-word span:nth-child(1) { animation-delay: .25s; }
-.intro-word span:nth-child(2) { animation-delay: 1.45s; transform: rotate(2deg); }
-.intro-word span:nth-child(3) { animation-delay: 2.65s; transform: rotate(-3deg); }
-.intro-word span:nth-child(4) { animation-delay: 3.85s; color: var(--red); transform: rotate(7deg); }
-.intro-line { width: 0; height: 7px; border-radius: 999px; background: var(--red); transform: rotate(-2deg); animation: drawLine .95s ease 5.05s forwards; }
+.intro-doodle { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: #fff; animation: introAway .24s ease 1.82s forwards; }
+.intro-word { width: min(560px, 78vw); height: auto; overflow: visible; transform: rotate(-2deg); }
+.intro-strokes path { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawStroke .34s ease forwards; animation-delay: calc(var(--i) * .058s); }
+.intro-strokes path.red { stroke: var(--red); }
 
 .site-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 84px; padding: 16px 72px; background: rgba(255, 255, 255, .94); border-bottom: 0; backdrop-filter: blur(18px); }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-doodle); }
-.brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border: 3px solid var(--ink); border-radius: 50%; background: var(--red); color: #fff; font-weight: 400; transform: rotate(-8deg); box-shadow: 3px 3px 0 var(--ink); }
+.brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border: 3px solid var(--ink); border-radius: 50%; background: var(--red); color: #fff; font-size: 18px; font-weight: 400; transform: rotate(-8deg); box-shadow: 3px 3px 0 var(--ink); }
 .brand strong, .brand small { display: block; line-height: 1.08; }
 .brand strong { font-size: 22px; font-weight: 400; transform: rotate(-1deg); }
 .brand small { color: var(--red); font-size: 13px; font-weight: 400; }
@@ -63,13 +59,13 @@ h3 { font-size: 21px; line-height: 1.25; margin-bottom: 8px; font-weight: 400; }
 .eyebrow, .lab-name { margin-bottom: 10px; color: var(--red); font-family: var(--font-doodle); font-size: 14px; font-weight: 400; letter-spacing: 0; }
 .lead { max-width: 760px; color: var(--muted); font-size: 19px; }
 
-.home-hero { position: relative; display: grid; grid-template-rows: 1.45fr auto 1.95fr; min-height: calc(152svh - 84px); padding: 0 52px; overflow: hidden; background: #fff; }
+.home-hero { position: relative; min-height: calc(165svh - 84px); padding: 0 52px; overflow: hidden; background: #fff; }
 .home-hero::before { position: absolute; right: 12%; top: 23%; width: 80px; height: 80px; border: 4px solid var(--red); border-radius: 48% 52% 58% 42%; content: ""; opacity: .88; transform: rotate(10deg); }
 .home-hero::after { position: absolute; left: 16%; bottom: 16%; width: 42px; height: 42px; border-radius: 50%; background: var(--red); content: ""; opacity: .08; }
 .hero-logo-dust span { position: absolute; right: 19%; bottom: 24%; display: grid; width: 36px; height: 36px; place-items: center; border: 2px solid var(--ink); border-radius: 50%; color: var(--red); font-family: var(--font-doodle); font-size: 20px; transform: rotate(-9deg); opacity: .86; }
 .hero-logo-dust i { position: absolute; left: 11%; top: 25%; width: 7px; height: 7px; border-radius: 50%; background: var(--red); content: ""; }
-.hero-copy { position: relative; z-index: 1; grid-row: 2; justify-self: center; width: min(980px, 100%); text-align: center; opacity: 0; transform: translateY(18px); }
-body.is-ready .hero-copy { animation: riseIn .72s ease forwards; }
+.hero-copy { position: absolute; left: 50%; top: calc((100svh - 84px) / 2); z-index: 1; width: min(980px, calc(100% - 104px)); text-align: center; opacity: 0; transform: translate(-50%, calc(-50% + 18px)); }
+body.is-ready .hero-copy { animation: riseHero .72s ease forwards; }
 .lab-name { display: block; margin: 0 0 54px; color: var(--ink); font-size: 18px; font-weight: 400; }
 .tiny-slogan { display: block; margin: 18px 0 0; color: var(--muted); font-size: 16px; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
 .doodle-title { display: grid; gap: 18px; max-width: 980px; margin: 0 auto; font-family: var(--font-doodle); font-size: 82px; font-weight: 400; line-height: 1.14; color: var(--ink); text-wrap: balance; }
@@ -202,14 +198,8 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
 @keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
-@keyframes writeChar {
-  0% { opacity: 1; clip-path: inset(0 100% 0 0); }
-  24% { opacity: 1; clip-path: inset(0 72% 0 0); }
-  48% { opacity: 1; clip-path: inset(0 45% 0 0); }
-  72% { opacity: 1; clip-path: inset(0 18% 0 0); }
-  100% { opacity: 1; clip-path: inset(0 0 0 0); }
-}
-@keyframes drawLine { to { width: 190px; } }
+@keyframes riseHero { to { opacity: 1; transform: translate(-50%, -50%); } }
+@keyframes drawStroke { to { stroke-dashoffset: 0; } }
 @keyframes introAway { to { opacity: 0; visibility: hidden; transform: scale(1.02); } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -231,21 +221,25 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
   .article-aside { position: static; }
 }
 @media (max-width: 720px) {
-  .intro-word { font-size: 54px; }
-  .site-header { min-height: 82px; padding: 14px 26px; }
-  .brand-mark { width: 42px; height: 42px; }
-  .brand strong { font-size: 22px; }
-  .menu-button { width: 46px; height: 46px; font-size: 19px; }
-  .site-nav { left: 26px; right: 26px; top: 72px; min-width: 0; padding: 16px; }
+  .intro-word { width: 82vw; }
+  .intro-strokes path { stroke-width: 9; }
+  .site-header { min-height: 72px; padding: 12px 24px; }
+  .brand { gap: 8px; }
+  .brand-mark { width: 34px; height: 34px; border-width: 3px; font-size: 16px; box-shadow: 2px 2px 0 var(--ink); }
+  .brand strong { font-size: 19px; }
+  .brand small { font-size: 11px; }
+  .menu-button { width: 36px; height: 36px; border-width: 3px; font-size: 17px; box-shadow: 2px 2px 0 var(--ink); }
+  .site-nav { left: 24px; right: 24px; top: 62px; min-width: 0; padding: 16px; }
   .site-nav.is-open { display: grid; }
   h1 { font-size: 36px; }
   h2 { font-size: 28px; }
   .home-hero, .home-content, .page-hero, .simple-gate, .card-grid, .article-grid, .image-feature, .split-section, .submit-section, .checker-layout, .results-band, .timeline, .case-layout, .article-layout { padding-left: 28px; padding-right: 28px; }
-  .home-hero { grid-template-rows: 1.35fr auto 2.5fr; min-height: calc(190svh - 82px); padding-top: 0; padding-bottom: 0; }
+  .home-hero { min-height: calc(190svh - 72px); padding-top: 0; padding-bottom: 0; }
   .home-hero::before { right: 26px; top: 19%; width: 54px; height: 54px; }
   .home-hero::after { left: 38px; bottom: 18%; width: 30px; height: 30px; }
   .hero-logo-dust span { right: 32px; bottom: 24%; width: 34px; height: 34px; font-size: 18px; }
   .hero-logo-dust i { left: 34px; top: 24%; }
+  .hero-copy { top: calc((100svh - 72px) / 2); width: calc(100% - 56px); }
   .lab-name { margin-bottom: 48px; font-size: 17px; }
   .doodle-title { gap: 18px; font-size: 43px; line-height: 1.3; }
   .english-line { margin-top: 32px; font-size: 16px; }
