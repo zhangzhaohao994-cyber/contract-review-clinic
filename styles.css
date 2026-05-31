@@ -36,6 +36,7 @@ body.has-intro { overflow: hidden; }
 .intro-doodle::after { position: absolute; left: var(--tap-x); top: var(--tap-y); display: grid; width: clamp(70px, 11vw, 112px); height: clamp(70px, 11vw, 112px); place-items: center; border: 3px solid var(--ink); border-radius: 50%; background: var(--red); color: #fff; content: "不"; font-family: var(--font-doodle); font-size: clamp(36px, 5vw, 62px); line-height: 1; opacity: 0; pointer-events: none; box-shadow: 4px 4px 0 var(--ink); transform: translate(-50%, -50%) scale(.14) rotate(-16deg); }
 .intro-lockup { position: relative; display: inline-grid; place-items: center; padding: 12px; }
 .intro-title { margin: 0; font-family: var(--font-doodle); font-size: clamp(70px, 13vw, 156px); font-weight: 400; line-height: 1; white-space: nowrap; transform: rotate(-1.5deg) skew(-.6deg); }
+.intro-hint { position: absolute; left: 50%; top: calc(100% + 16px); width: max-content; max-width: 82vw; margin: 0; color: var(--muted); font-family: var(--font-doodle); font-size: clamp(10px, 1.15vw, 13px); line-height: 1.35; text-align: center; transform: translateX(-50%) rotate(-1deg); }
 .intro-trigger { position: absolute; right: clamp(-42px, -4vw, -22px); top: clamp(-38px, -3.6vw, -18px); width: clamp(58px, 8vw, 92px); height: clamp(58px, 8vw, 92px); border: 0; border-radius: 45% 55% 52% 48%; background: transparent; transform: rotate(11deg); }
 .intro-trigger::before, .intro-trigger::after { position: absolute; inset: 0; border: 3px solid var(--red); border-radius: 45% 55% 52% 48%; content: ""; transition: transform .22s ease, border-color .22s ease; }
 .intro-trigger::after { inset: 5px 3px 3px 5px; border-width: 2px; border-radius: 54% 46% 48% 52%; opacity: .38; transform: rotate(18deg); }
@@ -275,6 +276,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
 }
 @media (max-width: 720px) {
   .intro-title { font-size: clamp(70px, 18vw, 82px); }
+  .intro-hint { top: calc(100% + 14px); font-size: 10px; }
   .intro-trigger { right: -17px; top: -38px; width: 58px; height: 58px; }
   .intro-trigger::before { border-width: 3px; }
   .intro-trigger::after { inset: 4px 3px 3px 4px; }
