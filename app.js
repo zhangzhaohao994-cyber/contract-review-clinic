@@ -31,13 +31,33 @@
 如甲方拖延支付，受托人可申请冻结甲方及本人所有银行账户，并按每日千分之三追加滞纳金。全体股东承担个人连带担保责任。
 争议由项目所在地人民法院管辖。`;
 
-    document.body.classList.add("is-ready");
-
     const intro = document.querySelector("[data-intro]");
     if (intro) {
-      window.setTimeout(() => {
-        intro.setAttribute("hidden", "");
-      }, 2150);
+      document.body.classList.add("has-intro");
+      let isEntering = false;
+      const enterHome = (event) => {
+        if (isEntering) return;
+        isEntering = true;
+        const point = event && typeof event.clientX === "number" ? event : null;
+        intro.style.setProperty("--tap-x", `${point ? point.clientX : window.innerWidth / 2}px`);
+        intro.style.setProperty("--tap-y", `${point ? point.clientY : window.innerHeight / 2}px`);
+        intro.classList.add("is-leaving");
+        const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.setTimeout(() => {
+          intro.setAttribute("hidden", "");
+          document.body.classList.remove("has-intro");
+          document.body.classList.add("is-ready");
+          window.scrollTo(0, 0);
+        }, prefersReduced ? 120 : 980);
+      };
+      intro.addEventListener("click", enterHome);
+      intro.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        enterHome();
+      });
+    } else {
+      document.body.classList.add("is-ready");
     }
 
     const menuButton = document.querySelector("[data-menu-button]");

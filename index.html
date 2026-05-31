@@ -9,15 +9,18 @@
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <body>
-    <div class="intro-doodle" data-intro aria-hidden="true">
-      <svg class="intro-word" viewBox="0 0 640 190" role="img" aria-label="怕被坑？">
-        <g class="intro-strokes">
-          <text class="intro-letter" style="--i: 0" x="98" y="126">怕</text>
-          <text class="intro-letter" style="--i: 1" x="238" y="126">被</text>
-          <text class="intro-letter" style="--i: 2" x="378" y="126">坑</text>
-          <text class="intro-letter red" style="--i: 3" x="518" y="126">？</text>
-        </g>
-      </svg>
+    <div class="intro-doodle" data-intro role="button" tabindex="0" aria-label="进入不被坑主页">
+      <div class="intro-canvas">
+        <div class="intro-sign" aria-hidden="true">
+          <span class="intro-seal">不</span>
+          <span><strong>不被坑！</strong><small>bubeiken</small></span>
+        </div>
+        <div class="intro-copy">
+          <p class="intro-kicker">契约实验室</p>
+          <h1 class="intro-title"><span>怕被坑？</span><span>写合同就来不被坑！</span></h1>
+          <p class="intro-note">点一下盖章 / tap anywhere</p>
+        </div>
+      </div>
     </div>
     <form name="contract-review" method="POST" action="/submit/success/" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data" hidden>
       <input type="hidden" name="form-name" value="contract-review" />
