@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { createReviewStore, estimateSeconds, getOpenAiConfigStatus, jsonResponse, parseMultipart } = require("./review-utils");
+const { createReviewStore, estimateSeconds, getAiConfigStatus, jsonResponse, parseMultipart } = require("./review-utils");
 
 function baseUrlFromEvent(event) {
   if (process.env.URL) return process.env.URL;
@@ -22,7 +22,7 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return jsonResponse(405, { error: "只支持 POST 上传。" });
 
   try {
-    const config = getOpenAiConfigStatus();
+    const config = getAiConfigStatus();
     if (!config.ok) return jsonResponse(503, { error: config.publicMessage, ownerMessage: config.ownerMessage });
 
     const { fields, files } = await parseMultipart(event);

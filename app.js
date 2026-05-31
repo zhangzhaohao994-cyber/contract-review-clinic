@@ -179,7 +179,7 @@
             setReviewStatus({
               title: "AI 通道未接通",
               eta: "先别传合同",
-              message: payload.message || "后台还没有配置 OpenAI 密钥。",
+              message: payload.message || "后台还没有配置 AI 密钥。",
               progress: 100
             });
             if (submitButton) submitButton.disabled = true;
@@ -242,7 +242,7 @@
           setReviewStatus({
             title: "AI 通道未接通",
             eta: "先别传合同",
-            message: "后台 OpenAI 密钥配好后，这里会自动恢复上传。",
+            message: "后台 AI 密钥配好后，这里会自动恢复上传。",
             progress: 100
           });
           return;

@@ -8,12 +8,16 @@
 
 ## AI 合同审查
 
-提交页会调用 Netlify Functions，并通过 OpenAI API 生成：
+提交页会调用 Netlify Functions，并通过 AI API 生成：
 
 - `修改版-原文件名.docx`
 - `修改说明-原文件名.docx`
 
 Netlify 环境变量需要配置：
 
-- `OPENAI_API_KEY`：必填
-- `OPENAI_MODEL`：可选，默认 `gpt-4.1`
+- `AI_PROVIDER`：可选，默认 `deepseek`
+- `DEEPSEEK_API_KEY`：使用 DeepSeek 时必填
+- `DEEPSEEK_MODEL`：可选，默认 `deepseek-chat`
+- `GEMINI_API_KEY`：使用 Gemini 时必填
+- `GEMINI_MODEL`：可选，默认 `gemini-2.5-flash`
+- `OPENAI_API_KEY` / `OPENAI_MODEL`：仅当 `AI_PROVIDER=openai` 时使用

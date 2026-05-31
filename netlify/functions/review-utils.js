@@ -133,12 +133,70 @@ function estimateSeconds(fileSize) {
   return Math.min(150, 35 + sizeMb * 12);
 }
 
+function getAiConfigStatus() {
+  const provider = String(process.env.AI_PROVIDER || "deepseek").trim().toLowerCase();
+  if (provider === "deepseek") return getDeepSeekConfigStatus();
+  if (provider === "gemini") return getGeminiConfigStatus();
+  if (provider === "openai") return getOpenAiConfigStatus();
+  return {
+    ok: false,
+    provider,
+    code: "unsupported_provider",
+    model: "",
+    publicMessage: "AI 审查通道配置错了，先暂停上传。",
+    ownerMessage: `不支持的 AI_PROVIDER：${provider}。请使用 deepseek、gemini 或 openai。`
+  };
+}
+
+function getDeepSeekConfigStatus() {
+  const apiKey = String(process.env.DEEPSEEK_API_KEY || "").trim();
+  const model = String(process.env.DEEPSEEK_MODEL || "deepseek-chat").trim();
+  if (!apiKey) {
+    return {
+      ok: false,
+      provider: "deepseek",
+      code: "missing_key",
+      model,
+      publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
+      ownerMessage: "Netlify 生产环境没有配置 DEEPSEEK_API_KEY。请在 DeepSeek Platform 创建 API key 后添加。"
+    };
+  }
+  if (!apiKey.startsWith("sk-")) {
+    return {
+      ok: false,
+      provider: "deepseek",
+      code: "invalid_key_format",
+      model,
+      publicMessage: "AI 审查通道接线不对，先暂停上传。",
+      ownerMessage: "Netlify 里的 DEEPSEEK_API_KEY 格式不对。请使用 DeepSeek 后台生成的 sk- 开头密钥。"
+    };
+  }
+  return { ok: true, provider: "deepseek", code: "ready", apiKey, model };
+}
+
+function getGeminiConfigStatus() {
+  const apiKey = String(process.env.GEMINI_API_KEY || "").trim();
+  const model = String(process.env.GEMINI_MODEL || "gemini-2.5-flash").trim();
+  if (!apiKey) {
+    return {
+      ok: false,
+      provider: "gemini",
+      code: "missing_key",
+      model,
+      publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
+      ownerMessage: "Netlify 生产环境没有配置 GEMINI_API_KEY。请在 Google AI Studio 创建 API key 后添加。"
+    };
+  }
+  return { ok: true, provider: "gemini", code: "ready", apiKey, model };
+}
+
 function getOpenAiConfigStatus() {
   const apiKey = String(process.env.OPENAI_API_KEY || "").trim();
   const model = String(process.env.OPENAI_MODEL || "gpt-4.1").trim();
   if (!apiKey) {
     return {
       ok: false,
+      provider: "openai",
       code: "missing_key",
       model,
       publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
@@ -148,13 +206,14 @@ function getOpenAiConfigStatus() {
   if (!apiKey.startsWith("sk-")) {
     return {
       ok: false,
+      provider: "openai",
       code: "invalid_key_format",
       model,
       publicMessage: "AI 审查通道接线不对，先暂停上传。",
       ownerMessage: "Netlify 里的 OPENAI_API_KEY 格式不对。请使用 OpenAI 后台生成的 sk- 开头密钥。"
     };
   }
-  return { ok: true, code: "ready", apiKey, model };
+  return { ok: true, provider: "openai", code: "ready", apiKey, model };
 }
 
 function cleanFilename(filename) {
@@ -334,6 +393,7 @@ module.exports = {
   createReviewStore,
   estimateSeconds,
   extractContractText,
+  getAiConfigStatus,
   getOpenAiConfigStatus,
   jsonResponse,
   parseMultipart,
