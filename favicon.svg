@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="契约体检室">
+  <rect width="64" height="64" rx="12" fill="#235f4f"/>
+  <path d="M18 14h28v36H18z" fill="#fff" opacity=".95"/>
+  <path d="M24 24h16M24 32h16M24 40h10" stroke="#235f4f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M39 42l4 4 8-11" fill="none" stroke="#d85f4f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
