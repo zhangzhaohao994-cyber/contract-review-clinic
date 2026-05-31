@@ -6,7 +6,7 @@ exports.handler = async (event) => {
   if (!jobId) return jsonResponse(400, { error: "缺少任务编号。" });
 
   try {
-    const store = createReviewStore();
+    const store = createReviewStore(event);
     const status = await store.get(`${jobId}:status`, { type: "json" });
     if (!status) return jsonResponse(404, { error: "没有找到这个审查任务。" });
     return jsonResponse(200, status);

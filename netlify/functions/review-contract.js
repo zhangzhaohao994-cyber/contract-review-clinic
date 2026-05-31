@@ -31,7 +31,7 @@ exports.handler = async (event) => {
 
     const estimatedSeconds = estimateSeconds(file.content.length);
     const jobId = crypto.randomUUID();
-    const store = createReviewStore();
+    const store = createReviewStore(event);
 
     await store.setJSON(`${jobId}:status`, {
       jobId,

@@ -110,7 +110,7 @@ async function reviewWithOpenAI({ contractText, fields, filename, truncated }) {
 }
 
 exports.handler = async (event) => {
-  const store = createReviewStore();
+  const store = createReviewStore(event);
   let jobId = "";
   try {
     jobId = JSON.parse(event.body || "{}").jobId;

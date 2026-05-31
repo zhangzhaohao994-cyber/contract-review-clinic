@@ -2,7 +2,7 @@ const Busboy = require("busboy");
 const fs = require("fs/promises");
 const os = require("os");
 const path = require("path");
-const { getStore } = require("@netlify/blobs");
+const { connectLambda, getStore } = require("@netlify/blobs");
 const JSZip = require("jszip");
 const pdfParse = require("pdf-parse");
 const { Document, HeadingLevel, Packer, Paragraph, TextRun } = require("docx");
@@ -26,9 +26,10 @@ function localStorePath(key) {
   return path.join(os.tmpdir(), "bubeiken-contract-reviews", `${safeKey}.json`);
 }
 
-function createReviewStore() {
+function createReviewStore(event) {
   let blobStore = null;
   try {
+    if (event) connectLambda(event);
     blobStore = getStore({ name: "contract-reviews", consistency: "strong" });
   } catch {
     blobStore = null;
@@ -39,6 +40,7 @@ function createReviewStore() {
       try {
         return await action(blobStore);
       } catch (error) {
+        if (process.env.NETLIFY) throw error;
         if (!String(error.message || "").includes("Netlify Blobs")) throw error;
       }
     }
