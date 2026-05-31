@@ -15,6 +15,15 @@
       </div>
       <div class="intro-line"></div>
     </div>
+    <form name="contract-review" method="POST" action="/submit/success/" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data" hidden>
+      <input type="hidden" name="form-name" value="contract-review" />
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="contact" />
+      <select name="role"><option>我是甲方 / 付款方</option></select>
+      <input name="contract-file" type="file" />
+      <textarea name="concern"></textarea>
+    </form>
 
     <header class="site-header" data-header>
       <a class="brand" href="/" aria-label="不被坑首页">
