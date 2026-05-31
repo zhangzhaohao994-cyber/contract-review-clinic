@@ -31,9 +31,9 @@ button { cursor: pointer; }
 ::selection { background: var(--yellow); color: var(--ink); }
 
 .intro-doodle { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: #fff; animation: introAway .24s ease 1.82s forwards; }
-.intro-word { width: min(560px, 78vw); height: auto; overflow: visible; transform: rotate(-2deg); }
-.intro-strokes path { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawStroke .34s ease forwards; animation-delay: calc(var(--i) * .058s); }
-.intro-strokes path.red { stroke: var(--red); }
+.intro-word { width: min(560px, 82vw); height: auto; overflow: visible; transform: rotate(-2deg); }
+.intro-letter { color: var(--ink); fill: transparent; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 720; stroke-dashoffset: 720; font-family: var(--font-doodle); font-size: 104px; font-weight: 400; paint-order: stroke fill; animation: drawGlyph .56s ease forwards, fillGlyph .1s linear forwards; animation-delay: calc(var(--i) * .38s), calc(var(--i) * .38s + .52s); }
+.intro-letter.red { color: var(--red); }
 
 .site-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 84px; padding: 16px 72px; background: rgba(255, 255, 255, .94); border-bottom: 0; backdrop-filter: blur(18px); }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-doodle); }
@@ -59,7 +59,7 @@ h3 { font-size: 21px; line-height: 1.25; margin-bottom: 8px; font-weight: 400; }
 .eyebrow, .lab-name { margin-bottom: 10px; color: var(--red); font-family: var(--font-doodle); font-size: 14px; font-weight: 400; letter-spacing: 0; }
 .lead { max-width: 760px; color: var(--muted); font-size: 19px; }
 
-.home-hero { position: relative; min-height: calc(165svh - 84px); padding: 0 52px; overflow: hidden; background: #fff; }
+.home-hero { position: relative; min-height: calc(100svh - 84px); padding: 0 52px; overflow: hidden; background: #fff; }
 .home-hero::before { position: absolute; right: 12%; top: 23%; width: 80px; height: 80px; border: 4px solid var(--red); border-radius: 48% 52% 58% 42%; content: ""; opacity: .88; transform: rotate(10deg); }
 .home-hero::after { position: absolute; left: 16%; bottom: 16%; width: 42px; height: 42px; border-radius: 50%; background: var(--red); content: ""; opacity: .08; }
 .hero-logo-dust span { position: absolute; right: 19%; bottom: 24%; display: grid; width: 36px; height: 36px; place-items: center; border: 2px solid var(--ink); border-radius: 50%; color: var(--red); font-family: var(--font-doodle); font-size: 20px; transform: rotate(-9deg); opacity: .86; }
@@ -73,7 +73,7 @@ body.is-ready .hero-copy { animation: riseHero .72s ease forwards; }
 .doodle-title span:first-child { color: var(--ink); transform: rotate(-2deg) skew(-1deg); }
 .doodle-title span:last-child { transform: rotate(.8deg) skew(.5deg); }
 .english-line { max-width: 760px; margin: 54px auto 0; color: var(--muted); font-family: "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 18px; }
-.home-content { padding: 130px 52px 82px; background: #fff; }
+.home-content { padding: 42px 52px 82px; background: #fff; }
 .home-content-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; width: min(1180px, 100%); margin: 0 auto; }
 .brand-stamps { display: flex; flex-wrap: wrap; gap: 10px; font-family: var(--font-doodle); font-weight: 400; }
 .brand-stamps span { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; box-shadow: 2px 2px 0 var(--ink); transform: rotate(-2deg); }
@@ -199,7 +199,8 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
 
 @keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
 @keyframes riseHero { to { opacity: 1; transform: translate(-50%, -50%); } }
-@keyframes drawStroke { to { stroke-dashoffset: 0; } }
+@keyframes drawGlyph { to { stroke-dashoffset: 0; } }
+@keyframes fillGlyph { to { fill: currentColor; } }
 @keyframes introAway { to { opacity: 0; visibility: hidden; transform: scale(1.02); } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -222,7 +223,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
 }
 @media (max-width: 720px) {
   .intro-word { width: 82vw; }
-  .intro-strokes path { stroke-width: 9; }
+  .intro-letter { font-size: 102px; stroke-width: 2.7; }
   .site-header { min-height: 72px; padding: 12px 24px; }
   .brand { gap: 8px; }
   .brand-mark { width: 34px; height: 34px; border-width: 3px; font-size: 16px; box-shadow: 2px 2px 0 var(--ink); }
@@ -234,7 +235,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
   h1 { font-size: 36px; }
   h2 { font-size: 28px; }
   .home-hero, .home-content, .page-hero, .simple-gate, .card-grid, .article-grid, .image-feature, .split-section, .submit-section, .checker-layout, .results-band, .timeline, .case-layout, .article-layout { padding-left: 28px; padding-right: 28px; }
-  .home-hero { min-height: calc(190svh - 72px); padding-top: 0; padding-bottom: 0; }
+  .home-hero { min-height: calc(100svh - 72px); padding-top: 0; padding-bottom: 0; }
   .home-hero::before { right: 26px; top: 19%; width: 54px; height: 54px; }
   .home-hero::after { left: 38px; bottom: 18%; width: 30px; height: 30px; }
   .hero-logo-dust span { right: 32px; bottom: 24%; width: 34px; height: 34px; font-size: 18px; }
@@ -244,8 +245,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow
   .doodle-title { gap: 18px; font-size: 43px; line-height: 1.3; }
   .english-line { margin-top: 32px; font-size: 16px; }
   .tiny-slogan { margin-top: 8px; font-size: 15px; }
-  .home-content { padding-top: 112px; }
+  .home-content { padding-top: 30px; }
   .home-content-head { gap: 32px; }
+  .hero-actions { order: -1; }
   .page-hero { min-height: calc(90svh - 92px); padding-top: 74px; padding-bottom: 74px; }
   .page-hero h1, .article-header h1 { font-size: 38px; line-height: 1.35; }
   .page-hero .lead, .article-header .lead { font-size: 16px; }
