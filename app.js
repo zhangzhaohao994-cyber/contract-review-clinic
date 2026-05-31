@@ -37,7 +37,7 @@
     if (intro) {
       window.setTimeout(() => {
         intro.setAttribute("hidden", "");
-      }, 3000);
+      }, 6900);
     }
 
     const menuButton = document.querySelector("[data-menu-button]");
