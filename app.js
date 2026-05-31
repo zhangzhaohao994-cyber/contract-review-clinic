@@ -34,28 +34,27 @@
     const intro = document.querySelector("[data-intro]");
     if (intro) {
       document.body.classList.add("has-intro");
+      const introTrigger = document.querySelector("[data-intro-trigger]");
       let isEntering = false;
       const enterHome = (event) => {
         if (isEntering) return;
         isEntering = true;
-        const point = event && typeof event.clientX === "number" ? event : null;
-        intro.style.setProperty("--tap-x", `${point ? point.clientX : window.innerWidth / 2}px`);
-        intro.style.setProperty("--tap-y", `${point ? point.clientY : window.innerHeight / 2}px`);
+        const source = event && event.currentTarget && event.currentTarget.getBoundingClientRect ? event.currentTarget : introTrigger;
+        const rect = source ? source.getBoundingClientRect() : null;
+        const tapX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+        const tapY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+        intro.style.setProperty("--tap-x", `${tapX}px`);
+        intro.style.setProperty("--tap-y", `${tapY}px`);
+        document.body.classList.remove("has-intro");
+        document.body.classList.add("is-ready");
+        window.scrollTo(0, 0);
         intro.classList.add("is-leaving");
         const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         window.setTimeout(() => {
           intro.setAttribute("hidden", "");
-          document.body.classList.remove("has-intro");
-          document.body.classList.add("is-ready");
-          window.scrollTo(0, 0);
-        }, prefersReduced ? 120 : 980);
+        }, prefersReduced ? 60 : 760);
       };
-      intro.addEventListener("click", enterHome);
-      intro.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        enterHome();
-      });
+      if (introTrigger) introTrigger.addEventListener("click", enterHome);
     } else {
       document.body.classList.add("is-ready");
     }
@@ -111,6 +110,34 @@
         filePicked.classList.toggle("file-picked", Boolean(file));
       });
     }
+
+    document.querySelectorAll("[data-copy-text]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const original = button.textContent;
+        const text = button.dataset.copyText || "";
+        const fallbackCopy = () => {
+          const helper = document.createElement("textarea");
+          helper.value = text;
+          helper.setAttribute("readonly", "");
+          helper.style.position = "fixed";
+          helper.style.left = "-999px";
+          document.body.appendChild(helper);
+          helper.select();
+          try {
+            document.execCommand("copy");
+          } catch {
+            // Best-effort copy; the text remains visible in the clause card.
+          }
+          helper.remove();
+        };
+        button.textContent = "已复制";
+        window.setTimeout(() => {
+          button.textContent = original;
+        }, 1200);
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).catch(fallbackCopy);
+        else fallbackCopy();
+      });
+    });
 
     const demoItems = [
       {
