@@ -110,9 +110,12 @@ async function reviewWithOpenAI({ contractText, fields, filename, truncated }) {
   const payload = await response.json();
   if (!response.ok) {
     const rawMessage = payload.error?.message || "OpenAI 审查失败。";
-    const message = response.status === 401
-      ? "OpenAI 密钥验证失败。请检查 Netlify 里的 OPENAI_API_KEY 是否来自 OpenAI 后台。"
-      : rawMessage;
+    let message = rawMessage;
+    if (response.status === 401) {
+      message = "OpenAI 密钥验证失败。请检查 Netlify 里的 OPENAI_API_KEY 是否来自 OpenAI 后台。";
+    } else if (response.status === 429 || /quota|billing|额度|余额/i.test(rawMessage)) {
+      message = "OpenAI 账户额度不足或还没有开通 API 计费。请到 OpenAI 后台检查 Billing / Credits 后再试。";
+    }
     throw new Error(message);
   }
   return safeJsonParse(responseText(payload));
