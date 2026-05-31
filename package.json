@@ -1,8 +1,8 @@
 {
-  "name": "bubeiken-contract-review",
+  "name": "bubeikeng-contract-review",
   "version": "1.0.0",
   "private": true,
-  "description": "AI contract review workflow for bubeiken on Netlify.",
+  "description": "AI contract review workflow for Bubeikeng on Netlify.",
   "dependencies": {
     "@netlify/blobs": "^9.1.0",
     "busboy": "^1.6.0",

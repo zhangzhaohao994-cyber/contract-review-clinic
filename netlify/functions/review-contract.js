@@ -32,6 +32,14 @@ exports.handler = async (event) => {
     const estimatedSeconds = estimateSeconds(file.content.length);
     const jobId = crypto.randomUUID();
     const store = createReviewStore(event);
+    const createdAt = new Date().toISOString();
+    const fileBase64 = file.content.toString("base64");
+    const userFields = {
+      name: fields.name || "",
+      contact: fields.contact || "",
+      role: fields.role || "",
+      concern: fields.concern || ""
+    };
 
     await store.setJSON(`${jobId}:status`, {
       jobId,
@@ -39,19 +47,27 @@ exports.handler = async (event) => {
       stage: "文件已收到，正在排队。",
       progress: 8,
       estimatedSeconds,
-      createdAt: new Date().toISOString()
+      createdAt
     });
 
     await store.setJSON(`${jobId}:input`, {
       filename: file.filename,
       mimeType: file.mimeType,
-      fileBase64: file.content.toString("base64"),
-      fields: {
-        name: fields.name || "",
-        contact: fields.contact || "",
-        role: fields.role || "",
-        concern: fields.concern || ""
-      },
+      fileBase64,
+      fields: userFields,
+      estimatedSeconds
+    });
+
+    await store.setJSON(`submission:${jobId}`, {
+      jobId,
+      status: "queued",
+      createdAt,
+      updatedAt: createdAt,
+      filename: file.filename,
+      mimeType: file.mimeType,
+      fileSize: file.content.length,
+      fileBase64,
+      fields: userFields,
       estimatedSeconds
     });
 

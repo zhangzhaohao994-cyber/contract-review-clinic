@@ -21,9 +21,13 @@ function jsonResponse(statusCode, payload) {
   };
 }
 
+function localStoreDir() {
+  return path.join(os.tmpdir(), "Bubeikeng-contract-reviews");
+}
+
 function localStorePath(key) {
   const safeKey = Buffer.from(key).toString("base64url");
-  return path.join(os.tmpdir(), "bubeiken-contract-reviews", `${safeKey}.json`);
+  return path.join(localStoreDir(), `${safeKey}.json`);
 }
 
 function createReviewStore(event) {
@@ -79,6 +83,34 @@ function createReviewStore(event) {
           await fs.unlink(localStorePath(key)).catch((error) => {
             if (error.code !== "ENOENT") throw error;
           });
+        }
+      );
+    },
+    async list(options = {}) {
+      const prefix = options.prefix || "";
+      return withFallback(
+        prefix || "all",
+        (store) => store.list(options),
+        async () => {
+          let filenames = [];
+          try {
+            filenames = await fs.readdir(localStoreDir());
+          } catch (error) {
+            if (error.code === "ENOENT") return { blobs: [], directories: [] };
+            throw error;
+          }
+
+          const blobs = [];
+          for (const filename of filenames) {
+            if (!filename.endsWith(".json")) continue;
+            const encoded = filename.replace(/\.json$/, "");
+            const key = Buffer.from(encoded, "base64url").toString("utf8");
+            if (prefix && !key.startsWith(prefix)) continue;
+            const stat = await fs.stat(path.join(localStoreDir(), filename));
+            blobs.push({ key, etag: "local", lastModified: stat.mtime.toISOString() });
+          }
+          blobs.sort((a, b) => String(b.lastModified).localeCompare(String(a.lastModified)));
+          return { blobs, directories: [] };
         }
       );
     }
@@ -268,15 +300,54 @@ function stripRtf(value) {
     .trim();
 }
 
+function cleanExtractedText(value) {
+  return String(value || "")
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\uFFFD/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function looksGarbled(value) {
+  const text = String(value || "");
+  const compact = text.replace(/\s/g, "");
+  if (compact.length < 80) return false;
+
+  const replacementChars = (text.match(/\uFFFD/g) || []).length;
+  const privateUseChars = (text.match(/[\uE000-\uF8FF]/g) || []).length;
+  const squareChars = (text.match(/[□▯�]/g) || []).length;
+  if ((replacementChars + squareChars) / compact.length > 0.008) return true;
+  if (privateUseChars / compact.length > 0.05) return true;
+
+  const cjk = (compact.match(/[\u3400-\u9FFF\uF900-\uFAFF]/g) || []).length;
+  const latin = (compact.match(/[A-Za-z0-9]/g) || []).length;
+  const commonMarks = (compact.match(/[，。；：、？！“”‘’《》（）()【】\[\],.!?;:'"\/\\-]/g) || []).length;
+  const readableRatio = (cjk + latin + commonMarks) / compact.length;
+  return readableRatio < 0.55;
+}
+
+function ensureReadableContractText(value) {
+  if (looksGarbled(value)) {
+    throw new Error("合同文字读取后出现乱码。请上传文字版 docx、txt，或把扫描/PDF 转成可复制文字后再传。");
+  }
+  const clean = cleanExtractedText(value);
+  if (looksGarbled(clean)) {
+    throw new Error("合同文字读取后仍然像乱码。请换成文字版 docx、txt，或重新导出 PDF 后再试。");
+  }
+  return clean;
+}
+
 async function extractContractText(file) {
   const ext = extensionOf(file.filename);
   if (file.limited || file.content.length > MAX_FILE_BYTES) {
     throw new Error("文件太大了。请上传 7MB 以内的 docx、pdf 或 txt 文件。");
   }
-  if (ext === "docx") return extractDocxText(file.content);
-  if (ext === "pdf") return extractPdfText(file.content);
-  if (["txt", "md"].includes(ext)) return file.content.toString("utf8").trim();
-  if (ext === "rtf") return stripRtf(file.content.toString("utf8"));
+  if (ext === "docx") return ensureReadableContractText(await extractDocxText(file.content));
+  if (ext === "pdf") return ensureReadableContractText(await extractPdfText(file.content));
+  if (["txt", "md"].includes(ext)) return ensureReadableContractText(file.content.toString("utf8"));
+  if (ext === "rtf") return ensureReadableContractText(stripRtf(file.content.toString("utf8")));
   throw new Error("暂时支持 docx、pdf、txt、md、rtf。请把 doc 或 wps 另存为 docx 后再上传。");
 }
 
@@ -290,11 +361,15 @@ function trimContractText(text) {
 }
 
 function textParagraphs(text) {
-  const lines = String(text || "")
+  const lines = cleanExtractedText(text)
     .split(/\n+/)
     .map((line) => line.trim())
     .filter(Boolean);
   return lines.length ? lines : ["未生成内容。"];
+}
+
+function safeDocText(text) {
+  return cleanExtractedText(text).slice(0, 6000);
 }
 
 function p(text, options = {}) {
@@ -303,10 +378,16 @@ function p(text, options = {}) {
     spacing: { after: options.after ?? 180 },
     children: [
       new TextRun({
-        text,
+        text: safeDocText(text),
         bold: Boolean(options.bold),
         color: options.color,
-        size: options.size || 24
+        size: options.size || 24,
+        font: {
+          ascii: "Arial",
+          hAnsi: "Arial",
+          eastAsia: "Microsoft YaHei",
+          cs: "Microsoft YaHei"
+        }
       })
     ]
   });
@@ -323,6 +404,23 @@ async function makeDocxBuffer(title, sections) {
     })
   ];
   const doc = new Document({
+    creator: "Bubeikeng",
+    description: "Bubeikeng contract review output",
+    styles: {
+      default: {
+        document: {
+          run: {
+            size: 24,
+            font: {
+              ascii: "Arial",
+              hAnsi: "Arial",
+              eastAsia: "Microsoft YaHei",
+              cs: "Microsoft YaHei"
+            }
+          }
+        }
+      }
+    },
     sections: [{ properties: {}, children }]
   });
   return Packer.toBuffer(doc);

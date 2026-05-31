@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>提交后台 | Bubeikeng</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="/" aria-label="不被坑首页">
+        <span class="brand-mark" aria-hidden="true">不</span>
+        <span><strong>不被坑！</strong><small>Bubeikeng</small></span>
+      </a>
+      <button class="menu-button" type="button" data-menu-button aria-label="打开导航">☰</button>
+      <nav class="site-nav" data-nav aria-label="主导航"><a class="nav-link" href="/services/">服务</a>
+<a class="nav-link" href="/tools/">工具</a>
+<a class="nav-link" href="/articles/">文章</a>
+<a class="nav-link" href="/cases/">案例</a>
+<a class="nav-link" href="/resources/">清单</a>
+<a class="nav-link" href="/submit/">提交合同</a></nav>
+    </header>
+    <div class="progress-bar" data-progress></div>
+
+    <main class="admin-page">
+      <section class="admin-shell">
+        <div class="admin-intro">
+          <p class="eyebrow">Owner room</p>
+          <h1>合同提交后台</h1>
+          <p>这里能看到用户填写的信息、上传的原合同，以及 AI 生成的修改版和修改说明。后台口令只给你自己用。</p>
+        </div>
+        <form class="admin-login" data-admin-login>
+          <label>后台口令<input type="password" data-admin-token placeholder="输入 ADMIN_TOKEN" autocomplete="current-password" /></label>
+          <button class="primary-button" type="submit">查看提交</button>
+        </form>
+        <p class="form-status" data-admin-status>输入口令后，会列出最近提交。</p>
+        <div class="admin-list" data-admin-list></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>怕被坑？写合同就来不被坑！</strong>
+        <p><span>Bubeikeng</span> · 契约实验室 · 日本博士后帮你免费审查合同</p>
+      </div>
+      <div class="footer-links">
+        <a href="/tools/contract-checker/">合同体检</a>
+        <a href="/articles/">文章库</a>
+        <a href="/submit/">提交初审</a>
+      </div>
+    </footer>
+
+    <script src="/app.js" defer></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("[data-admin-login]");
+        const tokenInput = document.querySelector("[data-admin-token]");
+        const status = document.querySelector("[data-admin-status]");
+        const list = document.querySelector("[data-admin-list]");
+        const savedToken = localStorage.getItem("Bubeikeng-admin-token") || "";
+        tokenInput.value = savedToken;
+
+        function esc(value) {
+          return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+        }
+
+        function when(value) {
+          if (!value) return "未记录";
+          const date = new Date(value);
+          if (Number.isNaN(date.getTime())) return value;
+          return date.toLocaleString("zh-CN", { hour12: false });
+        }
+
+        function size(bytes) {
+          if (!bytes) return "未知大小";
+          if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} KB`;
+          return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+        }
+
+        function downloadLink(token, jobId, type, label) {
+          return `<a class="download-pill" href="/.netlify/functions/admin-download?token=${encodeURIComponent(token)}&jobId=${encodeURIComponent(jobId)}&type=${encodeURIComponent(type)}">${label}</a>`;
+        }
+
+        function render(submissions, token) {
+          if (!submissions.length) {
+            list.innerHTML = '<div class="empty-state">现在还没有用户提交。</div>';
+            return;
+          }
+
+          list.innerHTML = submissions.map((item) => {
+            const fields = item.fields || {};
+            const links = [
+              item.hasOriginal ? downloadLink(token, item.jobId, "original", "原合同") : "",
+              item.hasReviewFiles ? downloadLink(token, item.jobId, "revised", "修改版") : "",
+              item.hasReviewFiles ? downloadLink(token, item.jobId, "changes", "修改说明") : ""
+            ].filter(Boolean).join("");
+            return `
+              <article class="admin-card">
+                <div class="admin-card-head">
+                  <div>
+                    <strong>${esc(fields.name || "未填称呼")}</strong>
+                    <span>${esc(item.status)} · ${esc(item.stage)}</span>
+                  </div>
+                  <time>${esc(when(item.createdAt))}</time>
+                </div>
+                <dl>
+                  <div><dt>联系方式</dt><dd>${esc(fields.contact || "未填")}</dd></div>
+                  <div><dt>身份</dt><dd>${esc(fields.role || "未填")}</dd></div>
+                  <div><dt>文件</dt><dd>${esc(item.filename)} · ${esc(size(item.fileSize))}</dd></div>
+                  <div><dt>担心</dt><dd>${esc(fields.concern || "未填")}</dd></div>
+                  <div><dt>摘要</dt><dd>${esc(item.summary || item.error || "还在处理中")}</dd></div>
+                </dl>
+                <div class="download-list">${links || '<span class="form-status">暂无可下载文件</span>'}</div>
+              </article>
+            `;
+          }).join("");
+        }
+
+        async function loadSubmissions() {
+          const token = tokenInput.value.trim();
+          if (!token) {
+            status.textContent = "先输入后台口令。";
+            return;
+          }
+          localStorage.setItem("Bubeikeng-admin-token", token);
+          status.textContent = "正在读取提交记录...";
+          list.innerHTML = "";
+          const response = await fetch(`/.netlify/functions/admin-submissions?token=${encodeURIComponent(token)}`);
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            status.textContent = payload.error || "读取失败。";
+            return;
+          }
+          status.textContent = `共 ${payload.submissions.length} 条提交。`;
+          render(payload.submissions, token);
+        }
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          loadSubmissions().catch((error) => {
+            status.textContent = error.message || "读取失败。";
+          });
+        });
+
+        if (savedToken) loadSubmissions().catch(() => undefined);
+      });
+    </script>
+  </body>
+</html>

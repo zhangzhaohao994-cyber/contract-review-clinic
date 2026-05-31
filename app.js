@@ -355,6 +355,8 @@
     const demoFix = document.querySelector("[data-demo-fix]");
     const demoMeter = document.querySelector("[data-demo-meter]");
     const demoCards = document.querySelectorAll(".demo-flow article");
+    const demoPrev = document.querySelector("[data-demo-prev]");
+    const demoNext = document.querySelector("[data-demo-next]");
     let demoIndex = 0;
     function renderDemo() {
       if (!demoSource || !demoRisk || !demoFix || !demoMeter) return;
@@ -362,12 +364,18 @@
       demoSource.textContent = item.source;
       demoRisk.textContent = item.risk;
       demoFix.textContent = item.fix;
-      demoCards.forEach((card, index) => card.classList.toggle("is-hot", index === demoIndex % 3));
+      demoCards.forEach((card, index) => card.classList.toggle("is-hot", index === 1));
       demoMeter.style.width = `${((demoIndex % demoItems.length) + 1) / demoItems.length * 100}%`;
-      demoIndex += 1;
     }
     renderDemo();
-    if (demoSource) setInterval(renderDemo, 2600);
+    demoPrev?.addEventListener("click", () => {
+      demoIndex = (demoIndex - 1 + demoItems.length) % demoItems.length;
+      renderDemo();
+    });
+    demoNext?.addEventListener("click", () => {
+      demoIndex = (demoIndex + 1) % demoItems.length;
+      renderDemo();
+    });
 
     function getMatches(text, rule) {
       const matches = [];

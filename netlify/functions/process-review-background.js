@@ -46,6 +46,16 @@ async function updateStatus(store, jobId, patch) {
   });
 }
 
+async function updateSubmission(store, jobId, patch) {
+  const current = await store.get(`submission:${jobId}`, { type: "json" });
+  if (!current) return;
+  await store.setJSON(`submission:${jobId}`, {
+    ...current,
+    ...patch,
+    updatedAt: new Date().toISOString()
+  });
+}
+
 async function waitForInput(store, jobId) {
   for (let attempt = 0; attempt < 20; attempt += 1) {
     const input = await store.get(`${jobId}:input`, { type: "json" });
@@ -255,6 +265,7 @@ exports.handler = async (event) => {
     if (!input) throw new Error("没有找到上传文件。");
 
     await updateStatus(store, jobId, { status: "processing", stage: "正在读取合同文件。", progress: 22 });
+    await updateSubmission(store, jobId, { status: "processing", stage: "正在读取合同文件。", progress: 22 });
 
     const file = {
       filename: input.filename,
@@ -266,6 +277,13 @@ exports.handler = async (event) => {
     if (contractText.length < 30) throw new Error("没有读到足够的合同正文，请换成文字版 docx/pdf/txt。");
 
     await updateStatus(store, jobId, { stage: "正在让 AI 审查风险条款。", progress: 48 });
+    await updateSubmission(store, jobId, {
+      status: "processing",
+      stage: "正在让 AI 审查风险条款。",
+      progress: 48,
+      extractedChars: contractText.length,
+      truncated
+    });
     const review = await reviewWithAi({
       contractText,
       fields: input.fields || {},
@@ -274,9 +292,11 @@ exports.handler = async (event) => {
     });
 
     await updateStatus(store, jobId, { stage: "正在生成修改版和修改说明。", progress: 82 });
+    await updateSubmission(store, jobId, { stage: "正在生成修改版和修改说明。", progress: 82 });
     const files = await buildReviewFiles(review, input.filename);
 
-    await store.setJSON(`${jobId}:status`, {
+    const completedAt = new Date().toISOString();
+    const completedStatus = {
       jobId,
       status: "completed",
       stage: "审查完成。",
@@ -285,13 +305,30 @@ exports.handler = async (event) => {
       summary: review.overall_summary,
       note: review.review_note,
       files,
-      completedAt: new Date().toISOString()
+      completedAt
+    };
+    await store.setJSON(`${jobId}:status`, completedStatus);
+    await updateSubmission(store, jobId, {
+      status: "completed",
+      stage: "审查完成。",
+      progress: 100,
+      summary: review.overall_summary,
+      note: review.review_note,
+      keyRisks: review.key_risks || [],
+      changeCount: Array.isArray(review.change_log) ? review.change_log.length : 0,
+      completedAt
     });
     await store.delete(`${jobId}:input`).catch(() => undefined);
     return jsonResponse(202, { ok: true });
   } catch (error) {
     if (jobId) {
       await updateStatus(store, jobId, {
+        status: "error",
+        stage: "审查失败。",
+        progress: 100,
+        error: error.message || "审查失败，请稍后再试。"
+      }).catch(() => undefined);
+      await updateSubmission(store, jobId, {
         status: "error",
         stage: "审查失败。",
         progress: 100,

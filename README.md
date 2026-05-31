@@ -1,4 +1,4 @@
-# 不被坑 bubeiken
+# 不被坑 Bubeikeng
 
 主标语：怕被坑？写合同就来不被坑！
 
@@ -21,3 +21,6 @@ Netlify 环境变量需要配置：
 - `GEMINI_API_KEY`：使用 Gemini 时必填
 - `GEMINI_MODEL`：可选，默认 `gemini-2.5-flash`
 - `OPENAI_API_KEY` / `OPENAI_MODEL`：仅当 `AI_PROVIDER=openai` 时使用
+- `ADMIN_TOKEN`：后台查看用户信息和合同文件的口令
+
+后台地址：`/admin/`。输入 `ADMIN_TOKEN` 后可查看用户填写的信息、原合同、修改版和修改说明。
