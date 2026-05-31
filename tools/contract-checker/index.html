@@ -1,0 +1,72 @@
+    <!doctype html>
+    <html lang="zh-CN">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="本地合同风险自检工具，识别付款、担保、违约金、空白授权等风险。" />
+        <title>合同快速体检 | 契约体检室</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="stylesheet" href="/styles.css" />
+      </head>
+      <body>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="/" aria-label="契约体检室首页">
+        <span class="brand-mark" aria-hidden="true">契</span>
+        <span><strong>契约体检室</strong><small>Contract Clinic</small></span>
+      </a>
+      <button class="menu-button" type="button" data-menu-button aria-label="打开导航">☰</button>
+      <nav class="site-nav" data-nav aria-label="主导航"><a class="nav-link" href="/services/">服务</a>
+<a class="nav-link is-active" href="/tools/">工具</a>
+<a class="nav-link" href="/articles/">文章</a>
+<a class="nav-link" href="/cases/">案例</a>
+<a class="nav-link" href="/resources/">清单</a>
+<a class="nav-link" href="/submit/">提交合同</a></nav>
+    </header>
+    <div class="progress-bar" data-progress></div>
+
+        <main>
+
+    <section class="checker-layout">
+      <div class="checker-intro">
+        <p class="eyebrow">Contract Radar</p>
+        <h1>合同快速体检</h1>
+        <p>粘贴正文，先做一轮本地扫描。它会挑出常见高危条款，并给出能拿去谈的改写方向。</p>
+      </div>
+      <section class="review-panel" aria-label="合同风险自检工具">
+        <div class="control-grid">
+          <label>你的身份<select id="roleSelect"><option value="partyA">我是甲方 / 付款方</option><option value="partyB">我是乙方 / 收款方</option><option value="employee">我是劳动者</option><option value="tenant">我是承租方</option><option value="investor">我是投资方</option></select></label>
+          <label>合同类型<select id="contractType"><option value="general">通用合同</option><option value="brokerage">居间 / 中介 / 介绍费</option><option value="construction">工程 / 拆除 / 施工</option><option value="purchase">采购 / 买卖</option><option value="lease">租赁</option></select></label>
+        </div>
+        <label class="textarea-label" for="contractText">粘贴合同正文</label>
+        <textarea id="contractText" placeholder="把合同正文放这里。看到“不可撤销、无条件支付、每日千分之三、空白处自行填写有效”，雷达会马上亮灯。"></textarea>
+        <div class="actions">
+          <button class="primary-button" id="scanButton" type="button">开始体检</button>
+          <button class="ghost-button" id="demoButton" type="button">载入居间协议示例</button>
+          <button class="icon-button" id="clearButton" type="button" aria-label="清空合同文本" title="清空">×</button>
+        </div>
+      </section>
+    </section>
+    <section class="results-band">
+      <div class="score-card" id="scoreCard"><p class="eyebrow">Risk Score</p><h2 id="result-title">等待体检</h2><div class="score-ring" id="scoreRing" aria-live="polite"><span id="scoreValue">--</span><small>分</small></div><p id="scoreSummary">粘贴合同后，我会先挑最容易让你吃亏的条款。</p></div>
+      <div class="result-list" id="resultList" aria-live="polite"><article class="empty-state"><h3>体检单会出现在这里</h3><p>不会替你拍脑袋签字，只帮你把该问清楚的地方摆到桌面上。</p></article></div>
+      <div class="rewrite-box"><p class="eyebrow">Safer Clauses</p><h2>常用保护条款</h2><div id="clauseSuggestions"><p>完成体检后，这里会根据风险生成可谈判的改写方向。</p></div></div>
+    </section>
+
+        </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>契约体检室</strong>
+        <p>日本博士后帮你免费审查合同。签字之前，先让条款过一遍安检。</p>
+      </div>
+      <div class="footer-links">
+        <a href="/tools/contract-checker/">合同体检</a>
+        <a href="/articles/">文章库</a>
+        <a href="/submit/">提交初审</a>
+      </div>
+    </footer>
+
+        <script src="/app.js" defer></script>
+      </body>
+    </html>

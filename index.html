@@ -1,253 +1,119 @@
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="日本博士后帮你免费审查合同：粘贴合同文本，快速发现付款、担保、违约金、空白授权、管辖和证据风险。"
-    />
-    <title>免费合同审查 | 日本博士后帮你免费审查合同</title>
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="preload" as="image" href="./contract-review-desk.jpg" />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="回到首页">
+    <!doctype html>
+    <html lang="zh-CN">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="契约体检室首页，提供免费合同初审、合同风险自检、合同避坑文章与签前清单。" />
+        <title>免费合同审查 | 日本博士后帮你免费审查合同</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="stylesheet" href="/styles.css" />
+      </head>
+      <body>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="/" aria-label="契约体检室首页">
         <span class="brand-mark" aria-hidden="true">契</span>
-        <span>
-          <strong>契约体检室</strong>
-          <small>Contract Clinic</small>
-        </span>
+        <span><strong>契约体检室</strong><small>Contract Clinic</small></span>
       </a>
-      <nav aria-label="主导航">
-        <a href="#checker">立即体检</a>
-        <a href="#service">服务范围</a>
-        <a href="#submit">提交合同</a>
-      </nav>
+      <button class="menu-button" type="button" data-menu-button aria-label="打开导航">☰</button>
+      <nav class="site-nav" data-nav aria-label="主导航"><a class="nav-link" href="/services/">服务</a>
+<a class="nav-link" href="/tools/">工具</a>
+<a class="nav-link" href="/articles/">文章</a>
+<a class="nav-link" href="/cases/">案例</a>
+<a class="nav-link" href="/resources/">清单</a>
+<a class="nav-link" href="/submit/">提交合同</a></nav>
     </header>
+    <div class="progress-bar" data-progress></div>
 
-    <main id="top">
-      <section class="hero-workspace" id="checker" aria-labelledby="hero-title">
-        <div class="workspace-copy">
-          <p class="eyebrow">免费初筛 · 偏实战 · 不讲玄学</p>
-          <h1 id="hero-title">日本博士后帮你免费审查合同</h1>
-          <p class="lead">
-            把合同正文粘进来，先做一轮“坑位扫描”：付款条件、个人担保、违约金、
-            空白授权、发票证据和争议管辖，哪一条按住你的钱包，马上亮灯。
-          </p>
-          <div class="trust-row" aria-label="服务特点">
-            <span>甲方/乙方视角</span>
-            <span>风险分级</span>
-            <span>改写建议</span>
-          </div>
+        <main>
+
+    <section class="home-hero">
+      <div class="hero-copy" data-entrance>
+        <p class="eyebrow">日本博士后帮你免费审查合同</p>
+        <h1>契约体检室</h1>
+        <p class="lead">把合同放进来，先看哪里会让你付款、担责、被补写、被高额违约金追着跑。复杂法律话，翻译成能谈判的句子。</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="/tools/contract-checker/">开始合同体检</a>
+          <a class="text-button" href="/articles/">先读几篇避坑文章</a>
         </div>
-
-        <section class="review-panel" aria-label="合同风险自检工具">
-          <div class="panel-head">
-            <div>
-              <p class="section-kicker">Contract Radar</p>
-              <h2>合同快速体检</h2>
-            </div>
-            <span class="status-pill">本地分析，不上传</span>
-          </div>
-
-          <div class="control-grid">
-            <label>
-              你的身份
-              <select id="roleSelect">
-                <option value="partyA">我是甲方 / 付款方</option>
-                <option value="partyB">我是乙方 / 收款方</option>
-                <option value="employee">我是劳动者</option>
-                <option value="tenant">我是承租方</option>
-                <option value="investor">我是投资方</option>
-              </select>
-            </label>
-            <label>
-              合同类型
-              <select id="contractType">
-                <option value="general">通用合同</option>
-                <option value="brokerage">居间 / 中介 / 介绍费</option>
-                <option value="construction">工程 / 拆除 / 施工</option>
-                <option value="purchase">采购 / 买卖</option>
-                <option value="lease">租赁</option>
-              </select>
-            </label>
-          </div>
-
-          <label class="textarea-label" for="contractText">粘贴合同正文</label>
-          <textarea
-            id="contractText"
-            placeholder="例如：不可撤销、无条件支付、每日千分之三、空白处由乙方自行填写有效……这些词一出现，雷达就会醒。"
-          ></textarea>
-
-          <div class="actions">
-            <button class="primary-button" id="scanButton" type="button">
-              <span aria-hidden="true">⌕</span>
-              开始体检
-            </button>
-            <button class="ghost-button" id="demoButton" type="button">载入居间协议示例</button>
-            <button class="icon-button" id="clearButton" type="button" aria-label="清空合同文本" title="清空">×</button>
-          </div>
-        </section>
-
-        <aside class="visual-card" aria-label="审查场景图">
-          <img src="./contract-review-desk.jpg" alt="桌面上的合同审查工作场景" />
-          <div class="visual-caption">
-            <strong>先看坑，再签字。</strong>
-            <span>红灯不是装饰，是你的谈判筹码。</span>
-          </div>
-        </aside>
-      </section>
-
-      <section class="results-band" aria-labelledby="result-title">
-        <div class="score-card" id="scoreCard">
-          <p class="section-kicker">Risk Score</p>
-          <h2 id="result-title">等待体检</h2>
-          <div class="score-ring" id="scoreRing" aria-live="polite">
-            <span id="scoreValue">--</span>
-            <small>分</small>
-          </div>
-          <p id="scoreSummary">粘贴合同后，我会先挑最容易让你吃亏的条款。</p>
+      </div>
+      <div class="demo-stage" aria-label="合同审查动态演示">
+        <div class="demo-head">
+          <span>Live Demo</span>
+          <strong>30 秒看懂它能干嘛</strong>
         </div>
-
-        <div class="result-list" id="resultList" aria-live="polite">
-          <article class="empty-state">
-            <h3>体检单会出现在这里</h3>
-            <p>不会替你“拍脑袋签字”，只帮你把该问清楚的地方摆到桌面上。</p>
-          </article>
-        </div>
-
-        <div class="rewrite-box">
-          <p class="section-kicker">Safer Clauses</p>
-          <h2>常用保护条款</h2>
-          <div id="clauseSuggestions">
-            <p>完成体检后，这里会根据风险生成可谈判的改写方向。</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="service-section" id="service" aria-labelledby="service-title">
-        <div class="section-intro">
-          <p class="section-kicker">What I Check</p>
-          <h2 id="service-title">不只找错字，重点找“签完才后悔”的条款</h2>
-        </div>
-        <div class="feature-grid">
+        <div class="demo-flow">
           <article>
-            <span class="feature-icon">付</span>
-            <h3>付款节点</h3>
-            <p>看是否先付款、无条件付款、未收款也要付，帮你把钱从“立刻飞走”改成“条件成就再说”。</p>
+            <small>合同原句</small>
+            <p data-demo-source>本承诺书不可撤销、不可更改、无条件见索即付。</p>
+          </article>
+          <article class="demo-risk">
+            <small>风险灯</small>
+            <p data-demo-risk>高风险：你可能失去付款抗辩权。</p>
           </article>
           <article>
-            <span class="feature-icon">责</span>
-            <h3>违约责任</h3>
-            <p>检查每日千分之几、无限赔偿、律师费全包等条款，避免违约金写成情绪出口。</p>
-          </article>
-          <article>
-            <span class="feature-icon">权</span>
-            <h3>授权边界</h3>
-            <p>识别代理、担保、连带责任、空白处可补写等风险，别让别人拿你的章开盲盒。</p>
-          </article>
-          <article>
-            <span class="feature-icon">证</span>
-            <h3>证据闭环</h3>
-            <p>补上收据、发票、银行回单、验收、交付、通知方式，让对方以后少一点“我没说过”。</p>
+            <small>改写建议</small>
+            <p data-demo-fix>改成“付款以服务完成、资料齐全、我方书面确认为前提”。</p>
           </article>
         </div>
-      </section>
-
-      <section class="process-band" aria-labelledby="process-title">
-        <div>
-          <p class="section-kicker">Workflow</p>
-          <h2 id="process-title">免费初审怎么走</h2>
+        <div class="demo-meter" aria-hidden="true"><span data-demo-meter></span></div>
+        <a class="mini-link" href="/tools/contract-checker/">打开完整合同雷达</a>
+      </div>
+      <div class="motion-board home-visual" aria-label="合同审查动效示意">
+        <div class="scan-line"></div>
+        <div class="doc-sheet">
+          <span></span><span></span><span></span><span></span><span></span>
+          <mark></mark><span></span><span></span><mark></mark><span></span>
         </div>
-        <ol class="steps">
-          <li>
-            <span>01</span>
-            <strong>先自检</strong>
-            <p>把文本粘到上面，先抓出明显风险点。</p>
-          </li>
-          <li>
-            <span>02</span>
-            <strong>再提交</strong>
-            <p>把合同文件和你的立场发来，说明最担心什么。</p>
-          </li>
-          <li>
-            <span>03</span>
-            <strong>给清单</strong>
-            <p>输出风险、建议改法、谈判优先级。</p>
-          </li>
-        </ol>
-      </section>
+        <div class="risk-chip chip-one">付款条件</div>
+        <div class="risk-chip chip-two">空白授权</div>
+        <div class="risk-chip chip-three">个人担保</div>
+      </div>
+    </section>
 
-      <section class="submit-section" id="submit" aria-labelledby="submit-title">
-        <div class="submit-copy">
-          <p class="section-kicker">Free Review</p>
-          <h2 id="submit-title">把合同发来，我先帮你扫一遍</h2>
-          <p>
-            简单说清楚你是哪一方、交易金额、最怕什么。越具体，审查越像手术刀；
-            只说“帮我看看”，也行，但刀会先从最大风险下手。
-          </p>
-          <ul class="fine-list">
-            <li>适合：居间协议、工程合同、买卖合同、租赁合同、合作协议。</li>
-            <li>输出：风险清单、重点条款改写建议、签前确认问题。</li>
-            <li>说明：免费初审不是正式律师法律意见，签署重大合同前建议咨询执业律师。</li>
-          </ul>
-        </div>
+    <section class="simple-gate">
+      <a class="gate-link reveal" href="/services/">
+        <strong>服务</strong>
+        <span>免费初审、重点改写、签前问题清单</span>
+      </a>
+      <a class="gate-link reveal" href="/tools/">
+        <strong>工具</strong>
+        <span>本地合同雷达、甲方付款节点检查</span>
+      </a>
+      <a class="gate-link reveal" href="/articles/">
+        <strong>文章</strong>
+        <span>把常见坑讲成能谈判的句子</span>
+      </a>
+      <a class="gate-link reveal" href="/cases/">
+        <strong>案例</strong>
+        <span>看一份合同如何从被动改成可控</span>
+      </a>
+    </section>
 
-        <form
-          class="contact-form"
-          name="contract-review"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          enctype="multipart/form-data"
-        >
-          <input type="hidden" name="form-name" value="contract-review" />
-          <p class="hidden-field">
-            <label>不要填写这里 <input name="bot-field" /></label>
-          </p>
+    <section class="image-feature reveal">
+      <img src="/media/hero-desk.jpg" alt="合同审查桌面场景" loading="lazy" />
+      <div>
+        <p class="eyebrow">How it feels</p>
+        <h2>不是把合同念一遍，而是把风险排队</h2>
+        <p>一份合同里真正要命的内容通常不多：付款触发、责任上限、证据闭环、解除出口、管辖地点。本站把这些内容拆成工具、文章、清单和案例，方便你按需深入。</p>
+        <a class="text-button" href="/resources/checklists/party-a/">查看甲方签前清单</a>
+      </div>
+    </section>
 
-          <label>
-            称呼
-            <input name="name" autocomplete="name" placeholder="例如：张先生" required />
-          </label>
-          <label>
-            联系方式
-            <input name="contact" placeholder="微信 / 手机 / 邮箱" required />
-          </label>
-          <label>
-            你是哪一方
-            <select name="role">
-              <option>我是甲方 / 付款方</option>
-              <option>我是乙方 / 收款方</option>
-              <option>我是劳动者</option>
-              <option>我是承租方</option>
-              <option>我是投资方</option>
-            </select>
-          </label>
-          <label>
-            合同文件
-            <input name="contract-file" type="file" accept=".doc,.docx,.pdf,.txt,.md" />
-          </label>
-          <label>
-            你最担心什么
-            <textarea name="concern" placeholder="例如：怕签完就要付居间费，怕对方补写空白，怕我个人承担连带责任。" required></textarea>
-          </label>
-          <button class="primary-button" type="submit">
-            <span aria-hidden="true">✓</span>
-            提交免费初审
-          </button>
-        </form>
-      </section>
-    </main>
+        </main>
 
     <footer class="site-footer">
-      <p>© <span id="year"></span> 契约体检室 · 日本博士后帮你免费审查合同</p>
-      <p>签字前先喝口水，再看付款条件。</p>
+      <div>
+        <strong>契约体检室</strong>
+        <p>日本博士后帮你免费审查合同。签字之前，先让条款过一遍安检。</p>
+      </div>
+      <div class="footer-links">
+        <a href="/tools/contract-checker/">合同体检</a>
+        <a href="/articles/">文章库</a>
+        <a href="/submit/">提交初审</a>
+      </div>
     </footer>
 
-    <script src="./app.js" defer></script>
-  </body>
-</html>
+        <script src="/app.js" defer></script>
+      </body>
+    </html>
