@@ -1,4 +1,4 @@
-const { createReviewStore, jsonResponse } = require("./review-utils");
+const { createReviewStore, jsonResponse, normalizeFilename } = require("./review-utils");
 
 function adminError(event) {
   const expected = String(process.env.ADMIN_TOKEN || "").trim();
@@ -9,7 +9,7 @@ function adminError(event) {
 }
 
 function attachmentName(filename) {
-  const clean = String(filename || "download").replace(/[\\/:*?"<>|]+/g, "-").trim() || "download";
+  const clean = normalizeFilename(filename || "download").replace(/[\\/:*?"<>|]+/g, "-").trim() || "download";
   const fallback = clean.replace(/[^\x20-\x7E]/g, "_");
   return `attachment; filename="${fallback}"; filename*=UTF-8''${encodeURIComponent(clean)}`;
 }

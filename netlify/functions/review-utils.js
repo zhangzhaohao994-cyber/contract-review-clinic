@@ -146,7 +146,7 @@ function parseMultipart(event) {
       file.on("end", () => {
         files.push({
           fieldName: name,
-          filename: info.filename || "contract",
+          filename: normalizeFilename(info.filename || "contract"),
           mimeType: info.mimeType || "application/octet-stream",
           limited,
           content: Buffer.concat(chunks)
@@ -248,8 +248,48 @@ function getOpenAiConfigStatus() {
   return { ok: true, provider: "openai", code: "ready", apiKey, model };
 }
 
+function countCjk(value) {
+  return (String(value || "").match(/[\u3400-\u9FFF\uF900-\uFAFF]/g) || []).length;
+}
+
+function countMojibakeMarkers(value) {
+  return (String(value || "").match(/[ÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõøùúûüýþÿ]/g) || []).length;
+}
+
+function repairUtf8Mojibake(value) {
+  const text = String(value || "");
+  if (!text) return text;
+  const markers = countMojibakeMarkers(text);
+  if (!markers && !/[�□]/.test(text)) return text;
+
+  const candidates = [];
+  try {
+    candidates.push(Buffer.from(text, "latin1").toString("utf8"));
+  } catch {
+    // Ignore failed decoding attempts and keep the original text.
+  }
+  try {
+    candidates.push(decodeURIComponent(text));
+  } catch {
+    // Not percent-encoded.
+  }
+
+  return candidates.reduce((best, candidate) => {
+    if (!candidate || /�/.test(candidate)) return best;
+    const cjkGain = countCjk(candidate) - countCjk(best);
+    const markerDrop = countMojibakeMarkers(best) - countMojibakeMarkers(candidate);
+    if (cjkGain >= 2 && markerDrop > 0) return candidate;
+    if (cjkGain > 0 && markerDrop >= 3) return candidate;
+    return best;
+  }, text);
+}
+
+function normalizeFilename(filename) {
+  return repairUtf8Mojibake(filename);
+}
+
 function cleanFilename(filename) {
-  return String(filename || "contract").replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, " ").trim() || "contract";
+  return normalizeFilename(filename).replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, " ").trim() || "contract";
 }
 
 function baseName(filename) {
@@ -301,7 +341,7 @@ function stripRtf(value) {
 }
 
 function cleanExtractedText(value) {
-  return String(value || "")
+  return repairUtf8Mojibake(value)
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
     .replace(/\r\n?/g, "\n")
     .replace(/[ \t]+\n/g, "\n")
@@ -320,6 +360,7 @@ function looksGarbled(value) {
   const squareChars = (text.match(/[□▯�]/g) || []).length;
   if ((replacementChars + squareChars) / compact.length > 0.008) return true;
   if (privateUseChars / compact.length > 0.05) return true;
+  if (countMojibakeMarkers(compact) / compact.length > 0.18 && countCjk(compact) < 8) return true;
 
   const cjk = (compact.match(/[\u3400-\u9FFF\uF900-\uFAFF]/g) || []).length;
   const latin = (compact.match(/[A-Za-z0-9]/g) || []).length;
@@ -428,7 +469,7 @@ async function makeDocxBuffer(title, sections) {
 
 async function buildReviewFiles(review, filename) {
   const name = baseName(filename);
-  const revisedBuffer = await makeDocxBuffer(`修改版-${name}`, [
+  const revisedBuffer = await makeDocxBuffer("修改版合同", [
     {
       title: "修改后的合同文本",
       paragraphs: textParagraphs(review.revised_contract_text)
@@ -446,7 +487,7 @@ async function buildReviewFiles(review, filename) {
     ]),
     ...(review.key_risks || []).map((risk) => `重点风险：${risk}`)
   ];
-  const changesBuffer = await makeDocxBuffer(`修改说明-${name}`, [
+  const changesBuffer = await makeDocxBuffer("修改说明", [
     {
       title: "审查摘要",
       paragraphs: changeParagraphs
@@ -455,11 +496,13 @@ async function buildReviewFiles(review, filename) {
 
   return [
     {
+      label: "下载修改版",
       filename: `修改版-${name}.docx`,
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       data: revisedBuffer.toString("base64")
     },
     {
+      label: "下载修改说明",
       filename: `修改说明-${name}.docx`,
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       data: changesBuffer.toString("base64")
@@ -494,6 +537,7 @@ module.exports = {
   getAiConfigStatus,
   getOpenAiConfigStatus,
   jsonResponse,
+  normalizeFilename,
   parseMultipart,
   safeJsonParse,
   trimContractText,

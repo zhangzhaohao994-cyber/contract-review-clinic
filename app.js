@@ -153,12 +153,12 @@
       function renderDownloads(files) {
         if (!downloads) return;
         downloads.innerHTML = "";
-        files.forEach((file) => {
+        files.forEach((file, index) => {
           const link = document.createElement("a");
           link.className = "download-pill";
           link.href = URL.createObjectURL(blobFromBase64(file.data, file.mimeType));
           link.download = file.filename;
-          link.textContent = `下载${file.filename}`;
+          link.textContent = file.label || (index === 0 ? "下载修改版" : "下载修改说明");
           downloads.appendChild(link);
         });
       }

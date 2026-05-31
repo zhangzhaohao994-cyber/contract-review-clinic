@@ -62,7 +62,15 @@ async function waitForInput(store, jobId) {
     if (input) return input;
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
-  return null;
+  const submission = await store.get(`submission:${jobId}`, { type: "json" });
+  if (!submission?.fileBase64) return null;
+  return {
+    filename: submission.filename,
+    mimeType: submission.mimeType,
+    fileBase64: submission.fileBase64,
+    fields: submission.fields || {},
+    estimatedSeconds: submission.estimatedSeconds || 60
+  };
 }
 
 async function reviewWithAi({ contractText, fields, filename, truncated }) {
