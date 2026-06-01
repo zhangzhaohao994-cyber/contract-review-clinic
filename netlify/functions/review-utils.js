@@ -175,7 +175,7 @@ function getAiConfigStatus() {
     provider,
     code: "unsupported_provider",
     model: "",
-    publicMessage: "AI 审查通道配置错了，先暂停上传。",
+    publicMessage: "日本博士后的审查桌配置错了，先暂停上传。",
     ownerMessage: `不支持的 AI_PROVIDER：${provider}。请使用 deepseek、gemini 或 openai。`
   };
 }
@@ -189,7 +189,7 @@ function getDeepSeekConfigStatus() {
       provider: "deepseek",
       code: "missing_key",
       model,
-      publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
+      publicMessage: "日本博士后还没接上线，先别把合同递进来。",
       ownerMessage: "Netlify 生产环境没有配置 DEEPSEEK_API_KEY。请在 DeepSeek Platform 创建 API key 后添加。"
     };
   }
@@ -199,7 +199,7 @@ function getDeepSeekConfigStatus() {
       provider: "deepseek",
       code: "invalid_key_format",
       model,
-      publicMessage: "AI 审查通道接线不对，先暂停上传。",
+      publicMessage: "日本博士后的审查桌接线不对，先暂停上传。",
       ownerMessage: "Netlify 里的 DEEPSEEK_API_KEY 格式不对。请使用 DeepSeek 后台生成的 sk- 开头密钥。"
     };
   }
@@ -215,7 +215,7 @@ function getGeminiConfigStatus() {
       provider: "gemini",
       code: "missing_key",
       model,
-      publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
+      publicMessage: "日本博士后还没接上线，先别把合同递进来。",
       ownerMessage: "Netlify 生产环境没有配置 GEMINI_API_KEY。请在 Google AI Studio 创建 API key 后添加。"
     };
   }
@@ -231,7 +231,7 @@ function getOpenAiConfigStatus() {
       provider: "openai",
       code: "missing_key",
       model,
-      publicMessage: "AI 审查通道还没接上，先别把合同递进来。",
+      publicMessage: "日本博士后还没接上线，先别把合同递进来。",
       ownerMessage: "Netlify 生产环境没有配置 OPENAI_API_KEY。请添加 OpenAI 后台生成的 sk- 开头密钥。"
     };
   }
@@ -241,7 +241,7 @@ function getOpenAiConfigStatus() {
       provider: "openai",
       code: "invalid_key_format",
       model,
-      publicMessage: "AI 审查通道接线不对，先暂停上传。",
+      publicMessage: "日本博士后的审查桌接线不对，先暂停上传。",
       ownerMessage: "Netlify 里的 OPENAI_API_KEY 格式不对。请使用 OpenAI 后台生成的 sk- 开头密钥。"
     };
   }
@@ -515,7 +515,7 @@ function safeJsonParse(text) {
     return JSON.parse(text);
   } catch {
     const match = String(text || "").match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("AI 返回内容不是可解析的 JSON。");
+    if (!match) throw new Error("日本博士后返回的审查结果暂时不可解析，请重新提交一次。");
     return JSON.parse(match[0]);
   }
 }

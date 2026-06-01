@@ -9,6 +9,6 @@ exports.handler = async (event) => {
     provider: config.provider,
     code: config.code,
     model: config.model,
-    message: config.ok ? `AI 审查通道已接通：${config.provider}。` : config.publicMessage
+    message: config.ok ? "日本博士后已经坐到审查桌前了。" : config.publicMessage
   });
 };

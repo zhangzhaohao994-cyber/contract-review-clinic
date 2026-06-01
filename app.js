@@ -177,9 +177,9 @@
           openAiReady = Boolean(payload.ok);
           if (!openAiReady) {
             setReviewStatus({
-              title: "AI 通道未接通",
+              title: "日本博士后还没坐稳",
               eta: "先别传合同",
-              message: payload.message || "后台还没有配置 AI 密钥。",
+              message: payload.message || "后台审查通道还没接好。",
               progress: 100
             });
             if (submitButton) submitButton.disabled = true;
@@ -187,7 +187,7 @@
         } catch {
           openAiReady = false;
           setReviewStatus({
-            title: "AI 通道自检失败",
+            title: "日本博士后暂时失联",
             eta: "先别传合同",
             message: "暂时没有连上审查通道，请稍后再试。",
             progress: 100
@@ -240,9 +240,9 @@
         event.preventDefault();
         if (!openAiReady) {
           setReviewStatus({
-            title: "AI 通道未接通",
+            title: "日本博士后还没坐稳",
             eta: "先别传合同",
-            message: "后台 AI 密钥配好后，这里会自动恢复上传。",
+            message: "后台审查通道接好后，这里会自动恢复上传。",
             progress: 100
           });
           return;
@@ -270,7 +270,7 @@
           setReviewStatus({
             title: "审查中",
             eta: `预计还要 ${formatSeconds(remaining)}`,
-            message: "AI 正在读合同，先抓付款、担责、违约金和空白补写。",
+            message: "日本博士后正在给你改合同，先抓付款、担责、违约金和空白补写。",
             progress: 14
           });
           countdownTimer = window.setInterval(() => {
